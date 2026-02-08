@@ -10,6 +10,7 @@ namespace Study_Planner
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("Hi");
         }
     }
 }
