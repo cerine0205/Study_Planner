@@ -27,5 +27,28 @@ namespace StudyPlanner
 
             items.Add(item);
         }
+        public List<PlannerItem> Items = new List<PlannerItem>();
+
+    public double CalculateProgress()
+    {
+        if (Items.Count == 0) return 0;
+        int completed = Items.Count(i => i.IsCompleted);
+        return Math.Round((completed * 100.0) / Items.Count, 2);
+    }
+    public List<PlannerItem> FilterByDay(DateTime day)
+    {
+        return Items.Where(i => i.Date.Date == day.Date).ToList();
+    }
+
+    public List<PlannerItem> FilterByWeek(DateTime startOfWeek)
+    {
+        DateTime end = startOfWeek.AddDays(7);
+        return Items.Where(i => i.Date >= startOfWeek && i.Date < end).ToList();
+    }
+
+    public List<PlannerItem> SortByPriority()
+    {
+        return Items.OrderByDescending(i => i.Priority).ThenBy(i => i.Date).ToList();
+    }
     }
 }
