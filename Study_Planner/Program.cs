@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Study_Planner
+namespace StudyPlanner
 {
     class Program
     {
@@ -35,12 +35,13 @@ namespace Study_Planner
                 Console.WriteLine("2. Add Deadline Task");
                 Console.WriteLine("3. Show All Tasks");
                 Console.WriteLine("4. Mark Task as Completed");
-                Console.WriteLine("5. Exit");
+                Console.WriteLine("5. Show High Priority Tasks");
+                Console.WriteLine("6. Exit");
                 Console.WriteLine("========================================");
-                Console.Write("Enter your choice (1-5): ");
+                Console.Write("Enter your choice (1-6): ");
 
                 // Read user input
-                string userChoice = Console.ReadLine();
+                string userChoice = Console.ReadLine().Trim();
 
                 // Process user choice using if-else
                 if (userChoice == "1")
@@ -61,12 +62,16 @@ namespace Study_Planner
                 }
                 else if (userChoice == "5")
                 {
+                    ShowHighPriorityTasks(myPlanner);
+                }
+                else if (userChoice == "6")
+                {
                     Console.WriteLine("\nThank you for using Study Planner!");
                     keepRunning = false;
                 }
                 else
                 {
-                    Console.WriteLine("\nError: Please enter a number between 1 and 5.");
+                    Console.WriteLine("\nError: Please enter a number between 1 and 6.");
                     Console.WriteLine("Press any key to continue...");
                     Console.ReadKey();
                 }
@@ -614,5 +619,29 @@ namespace Study_Planner
 
             return progress;
         }
+
+
+        static void ShowHighPriorityTasks(Planner planner)
+        {
+            var highPriorityItems = planner.GetItemsByPriority(Priority.High);
+
+            if (highPriorityItems.Count == 0)
+            {
+                Console.WriteLine("No high priority tasks found.");
+            }
+            else
+            {
+                Console.WriteLine("High Priority Tasks:");
+                foreach (var item in highPriorityItems)
+                {
+                    Console.WriteLine(item);
+                }
+            }
+
+            Console.ReadKey();
+
+        }
+
+
     }
 }

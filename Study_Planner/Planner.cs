@@ -88,6 +88,23 @@ namespace StudyPlanner
              return true;
         }
 
-     
+
+
+        public List<PlannerItem> GetItemsByPriority(Priority priority)
+        {
+            List<PlannerItem> result = new List<PlannerItem>();
+
+            foreach (var item in items)
+            {
+                if (item.Priority == priority)
+                {
+                    result.Add(item);
+                }
+            }
+
+            return result;
+        }
+
+
     }
 }
