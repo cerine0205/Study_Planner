@@ -36,9 +36,17 @@ namespace StudyPlanner
                 Console.WriteLine("3. Show All Tasks");
                 Console.WriteLine("4. Mark Task as Completed");
                 Console.WriteLine("5. Show High Priority Tasks");
-                Console.WriteLine("6. Exit");
+                Console.WriteLine("6.  Search Tasks");
+                Console.WriteLine("7.  Edit Task");
+                Console.WriteLine("8.  Delete Task");
+                Console.WriteLine("9.  Update Task Status");
+                Console.WriteLine("10. Show Overdue Tasks");
+                Console.WriteLine("11. Set Weekly Study Goal");
+                Console.WriteLine("12. Show Upcoming Deadlines (Next 3 Days)");
+                Console.WriteLine("----------------------------------------");
+                Console.WriteLine("0. Exit");
                 Console.WriteLine("========================================");
-                Console.Write("Enter your choice (1-6): ");
+                Console.Write("Enter your choice (0-12): ");
 
                 // Read user input
                 string userChoice = Console.ReadLine().Trim();
@@ -66,12 +74,42 @@ namespace StudyPlanner
                 }
                 else if (userChoice == "6")
                 {
-                    Console.WriteLine("\nThank you for using Study Planner!");
+                    SearchTasks();
+                }
+                else if (userChoice == "7")
+                {
+                    EditTask();
+                }
+                else if (userChoice == "8")
+                {
+                    DeleteTask();
+                }
+                else if (userChoice == "9")
+                {
+                    UpdateTaskStatus();
+                }
+                else if (userChoice == "10")
+                {
+                    ShowOverdueTasks();
+                }
+                else if (userChoice == "11")
+                {
+                    SetWeeklyGoal();
+                }
+                else if (userChoice == "12")
+                {
+                    ShowUpcomingDeadlines();
+                }
+                else if (userChoice == "0")
+                {
+                    Console.WriteLine("\n========================================");
+                    Console.WriteLine("Thank you for using Study Planner!");
+                    Console.WriteLine("========================================");
                     keepRunning = false;
                 }
                 else
                 {
-                    Console.WriteLine("\nError: Please enter a number between 1 and 6.");
+                    Console.WriteLine("\nError: Please enter a number between 0 and 12.");
                     Console.WriteLine("Press any key to continue...");
                     Console.ReadKey();
                 }
@@ -641,7 +679,566 @@ namespace StudyPlanner
             Console.ReadKey();
 
         }
+      // ========================================
+        // SEARCH OPERATION
+        // ========================================
+        static void SearchTasks()
+        {
+            Console.Clear();
+            Console.WriteLine("========================================");
+            Console.WriteLine("   SEARCH TASKS");
+            Console.WriteLine("========================================");
 
+            // Check if list is empty
+            if (myPlanner.Items.Count == 0)
+            {
+                Console.WriteLine("No tasks found. The list is empty.");
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+                return;
+            }
 
+            // Get search keyword from user
+            Console.Write("Enter search keyword (title or subject): ");
+            string searchKeyword = Console.ReadLine();
+
+            // Validate input
+            if (string.IsNullOrWhiteSpace(searchKeyword))
+            {
+                Console.WriteLine("Error: Search keyword cannot be empty.");
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+                return;
+            }
+
+            // First pass: count matching tasks
+            int matchCount = 0;
+            string lowerKeyword = searchKeyword.Trim().ToLower();
+
+            for (int i = 0; i < myPlanner.Items.Count; i++)
+            {
+                PlannerItem currentTask = myPlanner.Items[i];
+                string lowerTitle = currentTask.Title.ToLower();
+                string lowerCategory = currentTask.Category.ToLower();
+
+                // Check if keyword matches title or category
+                if (lowerTitle.Contains(lowerKeyword) || lowerCategory.Contains(lowerKeyword))
+                {
+                    matchCount++;
+                }
+            }
+
+            // Display results
+            if (matchCount == 0)
+            {
+                Console.WriteLine("\nNo tasks found matching: " + searchKeyword);
+            }
+            else
+            {
+                // Create array to store search results
+                PlannerItem[] searchResults = new PlannerItem[matchCount];
+                int arrayIndex = 0;
+
+                // Second pass: store matching tasks in array
+                for (int i = 0; i < myPlanner.Items.Count; i++)
+                {
+                    PlannerItem currentTask = myPlanner.Items[i];
+                    string lowerTitle = currentTask.Title.ToLower();
+                    string lowerCategory = currentTask.Category.ToLower();
+
+                    if (lowerTitle.Contains(lowerKeyword) || lowerCategory.Contains(lowerKeyword))
+                    {
+                        searchResults[arrayIndex] = currentTask;
+                        arrayIndex++;
+                    }
+                }
+
+                // Display results from array
+                Console.WriteLine("\n*** SEARCH RESULTS ***");
+                Console.WriteLine("Found " + searchResults.Length + " task(s):\n");
+
+                for (int i = 0; i < searchResults.Length; i++)
+                {
+                    PlannerItem task = searchResults[i];
+                    if (task.IsCompleted)
+                    {
+                        Console.Write("[DONE] ");
+                    }
+                    else
+                    {
+                        Console.Write("[TODO] ");
+                    }
+                    Console.WriteLine((i + 1) + ". " + task.GetDetails());
+                }
+            }
+
+            Console.WriteLine("\nPress any key to continue...");
+            Console.ReadKey();
+        }
+
+        // ========================================
+        // DELETE OPERATION
+        // ========================================
+        static void DeleteTask()
+        {
+            Console.Clear();
+            Console.WriteLine("========================================");
+            Console.WriteLine("   DELETE TASK");
+            Console.WriteLine("========================================");
+
+            // Check if list is empty
+            if (myPlanner.Items.Count == 0)
+            {
+                Console.WriteLine("No tasks found. The list is empty.");
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+                return;
+            }
+
+            // Display all tasks
+            Console.WriteLine("All tasks:\n");
+            for (int i = 0; i < myPlanner.Items.Count; i++)
+            {
+                PlannerItem currentTask = myPlanner.Items[i];
+                Console.WriteLine((i + 1) + ". " + currentTask.Title + " (" + currentTask.Category + ") - " + currentTask.Date.ToString("dd/MM/yyyy"));
+            }
+
+            // Get task number from user
+            Console.Write("\nEnter task number to delete (0 to cancel): ");
+            string taskNumberInput = Console.ReadLine();
+
+            // Validate input
+            int selectedTaskNumber;
+            bool isValidNumber = int.TryParse(taskNumberInput, out selectedTaskNumber);
+
+            if (!isValidNumber)
+            {
+                Console.WriteLine("Error: Please enter a valid number.");
+            }
+            else if (selectedTaskNumber == 0)
+            {
+                Console.WriteLine("Delete operation cancelled.");
+            }
+            else if (selectedTaskNumber < 1 || selectedTaskNumber > myPlanner.Items.Count)
+            {
+                Console.WriteLine("Error: Task number out of range.");
+            }
+            else
+            {
+                // Confirm deletion
+                PlannerItem taskToDelete = myPlanner.Items[selectedTaskNumber - 1];
+                Console.WriteLine("\nAre you sure you want to delete this task?");
+                Console.WriteLine(taskToDelete.Title + " (" + taskToDelete.Category + ")");
+                Console.Write("Type 'YES' to confirm: ");
+                string confirmation = Console.ReadLine();
+
+                if (confirmation != null && confirmation.Trim().ToUpper() == "YES")
+                {
+                    // Delete task and save
+                    myPlanner.Items.RemoveAt(selectedTaskNumber - 1);
+                    SavePlannerData();
+
+                    Console.WriteLine("\n*** SUCCESS! ***");
+                    Console.WriteLine("Task deleted successfully!");
+                }
+                else
+                {
+                    Console.WriteLine("\nDelete operation cancelled.");
+                }
+            }
+
+            Console.WriteLine("\nPress any key to continue...");
+            Console.ReadKey();
+        }
+
+        // ========================================
+        // EDIT OPERATION
+        // ========================================
+        static void EditTask()
+        {
+            Console.Clear();
+            Console.WriteLine("========================================");
+            Console.WriteLine("   EDIT TASK");
+            Console.WriteLine("========================================");
+
+            // Check if list is empty
+            if (myPlanner.Items.Count == 0)
+            {
+                Console.WriteLine("No tasks found. The list is empty.");
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+                return;
+            }
+
+            // Display all tasks
+            Console.WriteLine("All tasks:\n");
+            for (int i = 0; i < myPlanner.Items.Count; i++)
+            {
+                PlannerItem currentTask = myPlanner.Items[i];
+                Console.WriteLine((i + 1) + ". " + currentTask.Title + " (" + currentTask.Category + ") - " + currentTask.Date.ToString("dd/MM/yyyy"));
+            }
+
+            // Get task number from user
+            Console.Write("\nEnter task number to edit (0 to cancel): ");
+            string taskNumberInput = Console.ReadLine();
+
+            // Validate input
+            int selectedTaskNumber;
+            bool isValidNumber = int.TryParse(taskNumberInput, out selectedTaskNumber);
+
+            if (!isValidNumber)
+            {
+                Console.WriteLine("Error: Please enter a valid number.");
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+                return;
+            }
+            else if (selectedTaskNumber == 0)
+            {
+                Console.WriteLine("Edit operation cancelled.");
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+                return;
+            }
+            else if (selectedTaskNumber < 1 || selectedTaskNumber > myPlanner.Items.Count)
+            {
+                Console.WriteLine("Error: Task number out of range.");
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+                return;
+            }
+
+            // Get task to edit
+            PlannerItem oldTask = myPlanner.Items[selectedTaskNumber - 1];
+            
+            Console.WriteLine("\nEditing: " + oldTask.Title);
+            Console.WriteLine("Current details: " + oldTask.GetDetails());
+
+            // Get new values from user
+            string newTitle = GetValidTitle();
+            string newSubject = GetValidSubject();
+            int newMinutes = GetValidMinutes();
+            DateTime newDate = GetValidDate();
+            Priority newPriority = GetValidPriority();
+
+            try
+            {
+                PlannerItem newTask;
+
+                // Create new task based on original type
+                if (oldTask is StudySession)
+                {
+                    string newTopic = GetValidTopic();
+                    newTask = new StudySession(
+                        newDate,
+                        newTitle,
+                        newSubject,
+                        newMinutes,
+                        newPriority,
+                        newTopic
+                    );
+                }
+                else
+                {
+                    TaskType newTaskType = GetValidTaskType();
+                    newTask = new DeadlineTask(
+                        newDate,
+                        newTitle,
+                        newSubject,
+                        newMinutes,
+                        newTaskType,
+                        newPriority
+                    );
+                }
+
+                // Preserve completion status
+                if (oldTask.IsCompleted)
+                {
+                    newTask.MarkCompleted();
+                }
+
+                // Replace old task with new one and save
+                myPlanner.Items[selectedTaskNumber - 1] = newTask;
+                SavePlannerData();
+
+                Console.WriteLine("\n*** SUCCESS! ***");
+                Console.WriteLine("Task updated successfully!");
+                Console.WriteLine("New details: " + newTask.GetDetails());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("\nError: Could not update the task.");
+                Console.WriteLine("Reason: " + ex.Message);
+            }
+
+            Console.WriteLine("\nPress any key to continue...");
+            Console.ReadKey();
+        }
+
+        // ========================================
+        // UPDATE STATUS OPERATION
+        // ========================================
+        static void UpdateTaskStatus()
+        {
+            Console.Clear();
+            Console.WriteLine("========================================");
+            Console.WriteLine("   UPDATE TASK STATUS");
+            Console.WriteLine("========================================");
+
+            // Check if list is empty
+            if (myPlanner.Items.Count == 0)
+            {
+                Console.WriteLine("No tasks found. The list is empty.");
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+                return;
+            }
+
+            // Display all tasks with their status
+            Console.WriteLine("All tasks:\n");
+            for (int i = 0; i < myPlanner.Items.Count; i++)
+            {
+                PlannerItem currentTask = myPlanner.Items[i];
+                string status = currentTask.IsCompleted ? "[COMPLETED]" : "[INCOMPLETE]";
+                Console.WriteLine((i + 1) + ". " + status + " " + currentTask.Title + " (" + currentTask.Category + ")");
+            }
+
+            // Get task number from user
+            Console.Write("\nEnter task number to update status (0 to cancel): ");
+            string taskNumberInput = Console.ReadLine();
+
+            // Validate input
+            int selectedTaskNumber;
+            bool isValidNumber = int.TryParse(taskNumberInput, out selectedTaskNumber);
+
+            if (!isValidNumber)
+            {
+                Console.WriteLine("Error: Please enter a valid number.");
+            }
+            else if (selectedTaskNumber == 0)
+            {
+                Console.WriteLine("Update operation cancelled.");
+            }
+            else if (selectedTaskNumber < 1 || selectedTaskNumber > myPlanner.Items.Count)
+            {
+                Console.WriteLine("Error: Task number out of range.");
+            }
+            else
+            {
+                PlannerItem selectedTask = myPlanner.Items[selectedTaskNumber - 1];
+
+                // Check if already completed
+                if (selectedTask.IsCompleted)
+                {
+                    Console.WriteLine("\nThis task is already marked as completed.");
+                    Console.Write("Do you want to mark it as incomplete? (YES/NO): ");
+                    string response = Console.ReadLine();
+
+                    if (response != null && response.Trim().ToUpper() == "YES")
+                    {
+                        Console.WriteLine("Note: Cannot unmark completed tasks in current system design.");
+                        Console.WriteLine("Please delete and recreate the task if needed.");
+                    }
+                }
+                else
+                {
+                    // Mark as completed using Planner method
+                    bool success = myPlanner.MarkCompletedByIndex(selectedTaskNumber - 1);
+                    
+                    if (success)
+                    {
+                        Console.WriteLine("\n*** SUCCESS! ***");
+                        Console.WriteLine("Task marked as completed: " + selectedTask.Title);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error: Could not update task status.");
+                    }
+                }
+            }
+
+            Console.WriteLine("\nPress any key to continue...");
+            Console.ReadKey();
+        }
+
+        // ========================================
+        // SAVE DATA HELPER
+        // ========================================
+        static void SavePlannerData()
+        {
+            try
+            {
+                // Save all data to JSON file
+                FileStorage storage = new FileStorage("planner-data.json");
+                storage.Save(myPlanner.Items, myPlanner.WeeklyGoalMinutes);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Warning: Could not save data.");
+                Console.WriteLine("Error: " + ex.Message);
+            }
+        }
+
+        // ========================================
+        // SHOW OVERDUE TASKS
+        // ========================================
+        static void ShowOverdueTasks()
+        {
+            Console.Clear();
+            Console.WriteLine("========================================");
+            Console.WriteLine("   OVERDUE TASKS");
+            Console.WriteLine("========================================");
+
+            // Check if list is empty
+            if (myPlanner.Items.Count == 0)
+            {
+                Console.WriteLine("No tasks found. The list is empty.");
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+                return;
+            }
+
+            // First pass: count overdue tasks
+            int overdueCount = 0;
+            DateTime today = DateTime.Today;
+
+            for (int i = 0; i < myPlanner.Items.Count; i++)
+            {
+                PlannerItem currentTask = myPlanner.Items[i];
+                if (currentTask.IsOverdue(today))
+                {
+                    overdueCount++;
+                }
+            }
+
+            // Display results
+            if (overdueCount == 0)
+            {
+                Console.WriteLine("Great! No overdue tasks found.");
+            }
+            else
+            {
+                // Create array to store overdue tasks
+                PlannerItem[] overdueTasks = new PlannerItem[overdueCount];
+                int arrayIndex = 0;
+
+                // Second pass: store overdue tasks in array
+                for (int i = 0; i < myPlanner.Items.Count; i++)
+                {
+                    PlannerItem currentTask = myPlanner.Items[i];
+                    if (currentTask.IsOverdue(today))
+                    {
+                        overdueTasks[arrayIndex] = currentTask;
+                        arrayIndex++;
+                    }
+                }
+
+                // Display overdue tasks from array
+                Console.WriteLine("WARNING: You have " + overdueTasks.Length + " overdue task(s):\n");
+
+                for (int i = 0; i < overdueTasks.Length; i++)
+                {
+                    PlannerItem task = overdueTasks[i];
+                    // Calculate days overdue
+                    int daysOverdue = (today - task.Date.Date).Days;
+                    Console.WriteLine((i + 1) + ". " + task.Title + 
+                                    " (" + task.Category + ") - " + 
+                                    daysOverdue + " day(s) overdue");
+                }
+            }
+
+            Console.WriteLine("\nPress any key to continue...");
+            Console.ReadKey();
+        }
+
+        static void SetWeeklyGoal()
+        {
+            Console.Clear();
+            Console.WriteLine("========================================");
+            Console.WriteLine("   SET WEEKLY STUDY GOAL");
+            Console.WriteLine("========================================");
+
+            Console.WriteLine("Current weekly goal: " + myPlanner.WeeklyGoalMinutes + " minutes");
+            Console.Write("\nEnter new weekly study goal (minutes): ");
+
+            int goal = GetValidMinutes();
+            myPlanner.WeeklyGoalMinutes = goal;
+            SavePlannerData();
+
+            Console.WriteLine("\n*** SUCCESS! ***");
+            Console.WriteLine("Weekly goal set to: " + goal + " minutes (" + (goal / 60) + " hours)");
+
+            Console.WriteLine("\nPress any key to continue...");
+            Console.ReadKey();
+        }
+
+        static void ShowUpcomingDeadlines()
+        {
+            Console.Clear();
+            Console.WriteLine("========================================");
+            Console.WriteLine("   UPCOMING DEADLINES (NEXT 3 DAYS)");
+            Console.WriteLine("========================================");
+
+            if (myPlanner.Items.Count == 0)
+            {
+                Console.WriteLine("No tasks found. The list is empty.");
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+                return;
+            }
+
+            DateTime today = DateTime.Today;
+            DateTime threeDaysLater = today.AddDays(3);
+
+            int upcomingCount = 0;
+            for (int i = 0; i < myPlanner.Items.Count; i++)
+            {
+                PlannerItem currentTask = myPlanner.Items[i];
+                if (!currentTask.IsCompleted &&
+                    currentTask.Date.Date >= today &&
+                    currentTask.Date.Date <= threeDaysLater)
+                {
+                    upcomingCount++;
+                }
+            }
+
+            if (upcomingCount == 0)
+            {
+                Console.WriteLine("No upcoming deadlines in the next 3 days.");
+            }
+            else
+            {
+                PlannerItem[] upcomingTasks = new PlannerItem[upcomingCount];
+                int arrayIndex = 0;
+
+                for (int i = 0; i < myPlanner.Items.Count; i++)
+                {
+                    PlannerItem currentTask = myPlanner.Items[i];
+                    if (!currentTask.IsCompleted &&
+                        currentTask.Date.Date >= today &&
+                        currentTask.Date.Date <= threeDaysLater)
+                    {
+                        upcomingTasks[arrayIndex] = currentTask;
+                        arrayIndex++;
+                    }
+                }
+
+                Console.WriteLine("ALERT: You have " + upcomingTasks.Length + " upcoming deadline(s):\n");
+
+                for (int i = 0; i < upcomingTasks.Length; i++)
+                {
+                    PlannerItem task = upcomingTasks[i];
+                    int daysUntil = (task.Date.Date - today).Days;
+                    string urgency = daysUntil == 0 ? "TODAY!" : daysUntil + " day(s) left";
+
+                    Console.WriteLine((i + 1) + ". " + task.Title +
+                                    " (" + task.Category + ") - " +
+                                    task.Date.ToString("dd/MM/yyyy") + " - " + urgency);
+                }
+            }
+
+            Console.WriteLine("\nPress any key to continue...");
+            Console.ReadKey();
+        }
     }
 }

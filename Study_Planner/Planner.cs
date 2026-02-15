@@ -14,7 +14,7 @@ namespace StudyPlanner
 }
         private List<PlannerItem> items;
         private readonly FileStorage storage = new FileStorage("planner-data.json");
-        public int WeeklyGoalMinutes { get; private set; } = 0;
+        public int WeeklyGoalMinutes { get; set; } = 0;
 
         
         public Planner()
