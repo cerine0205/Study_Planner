@@ -348,9 +348,9 @@ namespace StudyPlanner
             Console.WriteLine("\nPress any key to continue...");
             Console.ReadKey();
         }
-
-        // VALIDATION METHOD 1: GET VALID TITLE (FIXED)
-
+        // ========================================
+        // VALIDATION METHOD 1: GET VALID TITLE
+        // ========================================
         static string GetValidTitle()
         {
             string userInput = "";
@@ -361,7 +361,8 @@ namespace StudyPlanner
                 Console.Write("Enter task title: ");
                 userInput = Console.ReadLine();
 
-                if (userInput == null || userInput.Trim() == "")
+                // Check if user pressed Enter without typing anything
+                if (string.IsNullOrWhiteSpace(userInput))
                 {
                     Console.WriteLine("Error: Title cannot be empty. Please try again.");
                 }
@@ -389,9 +390,9 @@ namespace StudyPlanner
             return userInput.Trim();
         }
 
-
-        // VALIDATION METHOD 2: GET VALID SUBJECT (FIXED)
-
+        // ========================================
+        // VALIDATION METHOD 2: GET VALID SUBJECT
+        // ========================================
         static string GetValidSubject()
         {
             string userInput = "";
@@ -402,7 +403,8 @@ namespace StudyPlanner
                 Console.Write("Enter subject/category: ");
                 userInput = Console.ReadLine();
 
-                if (userInput == null || userInput.Trim() == "")
+                // Check if user pressed Enter without typing anything
+                if (string.IsNullOrWhiteSpace(userInput))
                 {
                     Console.WriteLine("Error: Subject cannot be empty. Please try again.");
                 }
@@ -425,70 +427,9 @@ namespace StudyPlanner
             return userInput.Trim();
         }
 
-        // HELPER METHOD: CHECK IF STRING IS ONLY NUMBERS
-
-        static bool IsOnlyNumbers(string input)
-        {
-            if (input == "")
-            {
-                return false;
-            }
-
-            foreach (char c in input)
-            {
-                if (!char.IsDigit(c))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-
-        // HELPER METHOD: CHECK FOR REPEATED CHARACTERS
-
-        static bool HasTooManyRepeatedChars(string input)
-        {
-            // Count how many different characters exist in the input
-            if (input.Length == 0)
-            {
-                return false;
-            }
-
-            // Use a simple method to count unique characters
-            string uniqueChars = "";
-
-            foreach (char c in input)
-            {
-                bool found = false;
-                foreach (char unique in uniqueChars)
-                {
-                    if (c == unique)
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (!found)
-                {
-                    uniqueChars = uniqueChars + c;
-                }
-            }
-
-            // If less than 2 unique characters, reject
-            if (uniqueChars.Length < 2)
-            {
-                return true; // Not enough variety - REJECT
-            }
-
-            return false; // Input is valid - has variety
-        }
-
-
-        // VALIDATION METHOD 3: GET VALID TOPIC (FIXED)
-
+        // ========================================
+        // VALIDATION METHOD 3: GET VALID TOPIC
+        // ========================================
         static string GetValidTopic()
         {
             string userInput = "";
@@ -499,7 +440,8 @@ namespace StudyPlanner
                 Console.Write("Enter topic: ");
                 userInput = Console.ReadLine();
 
-                if (userInput == null || userInput.Trim() == "")
+                // Check if user pressed Enter without typing anything
+                if (string.IsNullOrWhiteSpace(userInput))
                 {
                     Console.WriteLine("Error: Topic cannot be empty. Please try again.");
                 }
@@ -521,8 +463,9 @@ namespace StudyPlanner
             return userInput.Trim();
         }
 
-        // VALIDATION METHOD 4: GET VALID MINUTES (FIXED)
-
+        // ========================================
+        // VALIDATION METHOD 4: GET VALID MINUTES
+        // ========================================
         static int GetValidMinutes()
         {
             int validMinutes = 0;
@@ -532,6 +475,13 @@ namespace StudyPlanner
             {
                 Console.Write("Enter estimated minutes (e.g., 30, 60, 120): ");
                 string minutesInput = Console.ReadLine();
+
+                // Check if user pressed Enter without typing anything
+                if (string.IsNullOrWhiteSpace(minutesInput))
+                {
+                    Console.WriteLine("Error: Input cannot be empty. Please enter a number.");
+                    continue;
+                }
 
                 bool isNumber = int.TryParse(minutesInput, out validMinutes);
 
@@ -558,8 +508,9 @@ namespace StudyPlanner
             return validMinutes;
         }
 
-        // VALIDATION METHOD 5: GET VALID DATE (FIXED)
-
+        // ========================================
+        // VALIDATION METHOD 5: GET VALID DATE
+        // ========================================
         static DateTime GetValidDate()
         {
             DateTime validDate = DateTime.Today;
@@ -567,12 +518,15 @@ namespace StudyPlanner
 
             while (!isValid)
             {
-
                 Console.Write("Enter date (dd/MM/yyyy, e.g., 25/03/2026): ");
-
-                Console.Write("Enter date (dd/MM/yyyy, e.g., 10/02/2026): ");
-
                 string dateInput = Console.ReadLine();
+
+                // Check if user pressed Enter without typing anything
+                if (string.IsNullOrWhiteSpace(dateInput))
+                {
+                    Console.WriteLine("Error: Date cannot be empty. Please try again.");
+                    continue;
+                }
 
                 bool isValidFormat = DateTime.TryParseExact(
                     dateInput,
@@ -585,12 +539,8 @@ namespace StudyPlanner
                 if (!isValidFormat)
                 {
                     Console.WriteLine("Error: Date format is incorrect.");
-
                     Console.WriteLine("Reason: Day, month, or year is invalid, or wrong separators used.");
                     Console.WriteLine("Please use dd/MM/yyyy format (e.g., 25/03/2026).");
-
-                    Console.WriteLine("Please use dd/MM/yyyy format (e.g., 10/02/2026).");
-
                 }
                 else if (validDate.Date < DateTime.Today)
                 {
@@ -608,8 +558,9 @@ namespace StudyPlanner
             return validDate;
         }
 
-        // VALIDATION METHOD 6: GET VALID PRIORITY (FIXED)
-
+        // ========================================
+        // VALIDATION METHOD 6: GET VALID PRIORITY
+        // ========================================
         static Priority GetValidPriority()
         {
             Priority validPriority = Priority.Medium;
@@ -624,6 +575,13 @@ namespace StudyPlanner
                 Console.Write("Enter your choice (1-3): ");
 
                 string priorityInput = Console.ReadLine();
+
+                // Check if user pressed Enter without typing anything
+                if (string.IsNullOrWhiteSpace(priorityInput))
+                {
+                    Console.WriteLine("Error: Input cannot be empty. Please enter a number (1, 2, or 3).");
+                    continue;
+                }
 
                 int priorityNumber;
                 bool isNumber = int.TryParse(priorityInput, out priorityNumber);
@@ -658,9 +616,9 @@ namespace StudyPlanner
             return validPriority;
         }
 
-
-        // VALIDATION METHOD 7: GET VALID TASK TYPE (FIXED)
-
+        // ========================================
+        // VALIDATION METHOD 7: GET VALID TASK TYPE
+        // ========================================
         static TaskType GetValidTaskType()
         {
             TaskType validTaskType = TaskType.Assignment;
@@ -675,6 +633,13 @@ namespace StudyPlanner
                 Console.Write("Enter your choice (1-3): ");
 
                 string typeInput = Console.ReadLine();
+
+                // Check if user pressed Enter without typing anything
+                if (string.IsNullOrWhiteSpace(typeInput))
+                {
+                    Console.WriteLine("Error: Input cannot be empty. Please enter a number (1, 2, or 3).");
+                    continue;
+                }
 
                 int typeNumber;
                 bool isNumber = int.TryParse(typeInput, out typeNumber);
@@ -709,9 +674,119 @@ namespace StudyPlanner
             return validTaskType;
         }
 
+        // ========================================
+        // HELPER METHOD: CHECK IF STRING IS ONLY NUMBERS
+        // ========================================
+        static bool IsOnlyNumbers(string input)
+        {
+            if (input == "")
+            {
+                return false;
+            }
+
+            foreach (char c in input)
+            {
+                if (!char.IsDigit(c))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        // ========================================
+        // HELPER METHOD: CHECK FOR REPEATED CHARACTERS
+        // ========================================
+        static bool HasTooManyRepeatedChars(string input)
+        {
+            if (input.Length == 0)
+            {
+                return false;
+            }
+
+            string uniqueChars = "";
+
+            foreach (char c in input)
+            {
+                bool found = false;
+                foreach (char unique in uniqueChars)
+                {
+                    if (c == unique)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    uniqueChars = uniqueChars + c;
+                }
+            }
+
+            if (uniqueChars.Length < 2)
+            {
+                return true;
+            }
+
+            return false;
+        }// HELPER METHOD: CHECK IF STRING IS ONLY NUMBERS
+        static bool IsOnlyNumbers(string input)
+        {
+            if (input == "")
+            {
+                return false;
+            }
+
+            foreach (char c in input)
+            {
+                if (!char.IsDigit(c))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        // HELPER METHOD: CHECK FOR REPEATED CHARACTERS
+        static bool HasTooManyRepeatedChars(string input)
+        {
+            if (input.Length == 0)
+            {
+                return false;
+            }
+
+            string uniqueChars = "";
+
+            foreach (char c in input)
+            {
+                bool found = false;
+                foreach (char unique in uniqueChars)
+                {
+                    if (c == unique)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    uniqueChars = uniqueChars + c;
+                }
+            }
+
+            if (uniqueChars.Length < 2)
+            {
+                return true;
+            }
+
+            return false;
+        }
 
         // HELPER METHOD: CALCULATE PROGRESS MANUALLY
-
         static double CalculateProgressManually()
         {
             if (myPlanner.Items.Count == 0)
@@ -735,7 +810,6 @@ namespace StudyPlanner
 
             return progress;
         }
-    
 
 
 
@@ -768,7 +842,7 @@ namespace StudyPlanner
 
 
 
-static void ShowHighPriorityTasks(Planner planner)
+        static void ShowHighPriorityTasks(Planner planner)
         {
             var highPriorityItems = planner.GetItemsByPriority(Priority.High);
 
