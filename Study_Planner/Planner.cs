@@ -9,7 +9,7 @@ namespace StudyPlanner{
     // Manages planner items and validates data before adding them to the system.
 public class Planner{
    
-
+   
     public PlannerItem[] Items = new PlannerItem[0];
 
     public void AddItem(PlannerItem item)
@@ -38,15 +38,6 @@ public class Planner{
     {
         return Items
             .Where(i => i.Date.Date == day.Date)
-            .ToArray();
-    }
-
-    public PlannerItem[] FilterByWeek(DateTime startOfWeek)
-    {
-        DateTime end = startOfWeek.AddDays(7);
-
-        return Items
-            .Where(i => i.Date >= startOfWeek && i.Date < end)
             .ToArray();
     }
 
