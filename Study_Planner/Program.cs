@@ -491,7 +491,7 @@ namespace StudyPlanner
 
             while (!isValid)
             {
-                Console.Write("Enter date (dd/MM/yyyy, e.g., 25/12/2024): ");
+                Console.Write("Enter date (dd/MM/yyyy, e.g., 10/02/2026): ");
                 string dateInput = Console.ReadLine();
 
                 // Try to parse the date in the exact format
@@ -507,7 +507,7 @@ namespace StudyPlanner
                 {
                     // Date format is wrong
                     Console.WriteLine("Error: Date format is incorrect.");
-                    Console.WriteLine("Please use dd/MM/yyyy format (e.g., 25/12/2024).");
+                    Console.WriteLine("Please use dd/MM/yyyy format (e.g., 10/02/2026).");
                 }
                 else if (validDate.Date < DateTime.Today)
                 {
