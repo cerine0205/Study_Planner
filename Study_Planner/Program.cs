@@ -1,9 +1,12 @@
 ﻿using StudyPlanner;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Json;
 using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.Serialization.Json;
+using System.IO;
 
 namespace StudyPlanner
 {
@@ -11,6 +14,8 @@ namespace StudyPlanner
     {
         // Main planner object to store all tasks
         static Planner myPlanner = new Planner();
+
+       
 
         // Study tips array - Simple student-level feature
         static string[] studyTips = new string[]
@@ -23,6 +28,21 @@ namespace StudyPlanner
         };
         static void Main(string[] args)
         {
+
+
+                // إنشاء كائن من FileStorage لتحميل البيانات
+                FileStorage fileStorage = new FileStorage();
+
+                // تحميل البيانات من ملف JSON إلى المصفوفة myPlanner.Items
+                var (tasks, weeklyGoalMinutes) = fileStorage.Load();
+
+                // الآن يمكننا تخزين المهام في myPlanner.Items
+                myPlanner.Items = tasks;  // تخزين البيانات في myPlanner.Items
+
+                // عرض المهام أو أي عمليات أخرى
+                Console.WriteLine("Tasks have been loaded into myPlanner!");
+            
+
             // This is the main program loop - keeps running until user exits
             bool keepRunning = true;
 
@@ -871,6 +891,12 @@ static int GetValidMinutes()
 
         static void ShowHighPriorityTasks(Planner planner)
         {
+
+            Console.Clear();
+            Console.WriteLine("========================================");
+            Console.WriteLine(" SHOW HIGH PRIORITY TASKS");
+            Console.WriteLine("========================================");
+
             var highPriorityItems = planner.GetItemsByPriority(Priority.High);
 
             if (highPriorityItems.Length == 0)
@@ -879,7 +905,6 @@ static int GetValidMinutes()
             }
             else
             {
-                Console.WriteLine("High Priority Tasks:");
                 foreach (var item in highPriorityItems)
                 {
                     Console.WriteLine(item);
@@ -889,7 +914,7 @@ static int GetValidMinutes()
             Console.ReadKey();
 
         }
-      // ========================================
+        // ========================================
         // SEARCH OPERATION
         // ========================================
         static void SearchTasks()
