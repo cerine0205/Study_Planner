@@ -349,165 +349,213 @@ namespace StudyPlanner
             Console.ReadKey();
         }
         // ========================================
-        // VALIDATION METHOD 1: GET VALID TITLE
-        // ========================================
-        static string GetValidTitle()
+// VALIDATION METHOD 1: GET VALID TITLE
+// ========================================
+static string GetValidTitle()
+{
+    string userInput = "";
+    bool isValid = false;
+
+    while (!isValid)
+    {
+        Console.Write("Enter task title: ");
+        userInput = Console.ReadLine();
+
+        // Check if user pressed Enter without typing anything
+        if (string.IsNullOrWhiteSpace(userInput))
         {
-            string userInput = "";
-            bool isValid = false;
+            Console.WriteLine("Error: Title cannot be empty. Please try again.");
+        }
+        else if (userInput.Trim().Length < 3)
+        {
+            Console.WriteLine("Error: Title is too short. Please enter at least 3 characters.");
+            Console.WriteLine("Example: 'Review Math' or 'Study Chapter 5'");
+        }
+        else if (ContainsNegativeSign(userInput.Trim()))
+        {
+            Console.WriteLine("Error: Title cannot contain minus sign (-).");
+        }
+        else if (IsOnlyNumbers(userInput.Trim()))
+        {
+            Console.WriteLine("Error: Title cannot be just numbers. Please add a description.");
+            Console.WriteLine("Example: Instead of '4', write 'Chapter 4 Review'");
+        }
+        else if (ContainsSpecialCharacters(userInput.Trim()))
+        {
+            Console.WriteLine("Error: Title cannot contain special characters like $, @, #, %, etc.");
+            Console.WriteLine("Please use only letters, numbers, and spaces.");
+        }
+        else if (!ContainsLetters(userInput.Trim()))
+        {
+            Console.WriteLine("Error: Title must contain at least some letters.");
+            Console.WriteLine("Example: 'Math Assignment 1' or 'Chapter 5'");
+        }
+        else if (HasTooManyRepeatedChars(userInput.Trim()))
+        {
+            Console.WriteLine("Error: Title contains too many repeated characters.");
+            Console.WriteLine("Please enter a meaningful title, not random letters.");
+        }
+        else
+        {
+            isValid = true;
+        }
+    }
 
-            while (!isValid)
-            {
-                Console.Write("Enter task title: ");
-                userInput = Console.ReadLine();
+    return userInput.Trim();
+}
 
-                // Check if user pressed Enter without typing anything
-                if (string.IsNullOrWhiteSpace(userInput))
-                {
-                    Console.WriteLine("Error: Title cannot be empty. Please try again.");
-                }
-                else if (userInput.Trim().Length < 3)
-                {
-                    Console.WriteLine("Error: Title is too short. Please enter at least 3 characters.");
-                    Console.WriteLine("Example: 'Review Math' or 'Study Chapter 5'");
-                }
-                else if (IsOnlyNumbers(userInput.Trim()))
-                {
-                    Console.WriteLine("Error: Title cannot be just numbers. Please add a description.");
-                    Console.WriteLine("Example: Instead of '4', write 'Chapter 4 Review'");
-                }
-                else if (HasTooManyRepeatedChars(userInput.Trim()))
-                {
-                    Console.WriteLine("Error: Title contains too many repeated characters.");
-                    Console.WriteLine("Please enter a meaningful title, not random letters.");
-                }
-                else
-                {
-                    isValid = true;
-                }
-            }
+// ========================================
+// VALIDATION METHOD 2: GET VALID SUBJECT
+// ========================================
+static string GetValidSubject()
+{
+    string userInput = "";
+    bool isValid = false;
 
-            return userInput.Trim();
+    while (!isValid)
+    {
+        Console.Write("Enter subject/category: ");
+        userInput = Console.ReadLine();
+
+        // Check if user pressed Enter without typing anything
+        if (string.IsNullOrWhiteSpace(userInput))
+        {
+            Console.WriteLine("Error: Subject cannot be empty. Please try again.");
+        }
+        else if (ContainsNegativeSign(userInput.Trim()))
+        {
+            Console.WriteLine("Error: Subject cannot contain minus sign (-).");
+        }
+        else if (IsOnlyNumbers(userInput.Trim()))
+        {
+            Console.WriteLine("Error: Subject name cannot be just numbers.");
+            Console.WriteLine("Please enter a real subject name like 'Math' or 'Physics'.");
+        }
+        else if (ContainsSpecialCharacters(userInput.Trim()))
+        {
+            Console.WriteLine("Error: Subject cannot contain special characters like $, @, #, %, etc.");
+            Console.WriteLine("Please use only letters and spaces.");
+        }
+        else if (!ContainsLetters(userInput.Trim()))
+        {
+            Console.WriteLine("Error: Subject must contain letters.");
+            Console.WriteLine("Please enter a real subject name like 'Math' or 'Physics'.");
+        }
+        else if (HasTooManyRepeatedChars(userInput.Trim()))
+        {
+            Console.WriteLine("Error: Subject name contains too many repeated characters.");
+            Console.WriteLine("Please enter a real subject name, not random letters.");
+        }
+        else
+        {
+            isValid = true;
+        }
+    }
+
+    return userInput.Trim();
+}
+
+// ========================================
+// VALIDATION METHOD 3: GET VALID TOPIC
+// ========================================
+static string GetValidTopic()
+{
+    string userInput = "";
+    bool isValid = false;
+
+    while (!isValid)
+    {
+        Console.Write("Enter topic: ");
+        userInput = Console.ReadLine();
+
+        // Check if user pressed Enter without typing anything
+        if (string.IsNullOrWhiteSpace(userInput))
+        {
+            Console.WriteLine("Error: Topic cannot be empty. Please try again.");
+        }
+        else if (userInput.Trim().Length < 3)
+        {
+            Console.WriteLine("Error: Topic is too short. Please enter at least 3 characters.");
+        }
+        else if (ContainsNegativeSign(userInput.Trim()))
+        {
+            Console.WriteLine("Error: Topic cannot contain minus sign (-).");
+        }
+        else if (ContainsSpecialCharacters(userInput.Trim()))
+        {
+            Console.WriteLine("Error: Topic cannot contain special characters like $, @, #, %, etc.");
+            Console.WriteLine("Please use only letters, numbers, and spaces.");
+        }
+        else if (!ContainsLetters(userInput.Trim()))
+        {
+            Console.WriteLine("Error: Topic must contain letters.");
+            Console.WriteLine("Please enter a meaningful topic name.");
+        }
+        else if (HasTooManyRepeatedChars(userInput.Trim()))
+        {
+            Console.WriteLine("Error: Topic contains too many repeated characters.");
+            Console.WriteLine("Please enter a meaningful topic, not random letters.");
+        }
+        else
+        {
+            isValid = true;
+        }
+    }
+
+    return userInput.Trim();
+}
+
+// ========================================
+// VALIDATION METHOD 4: GET VALID MINUTES
+// ========================================
+static int GetValidMinutes()
+{
+    int validMinutes = 0;
+    bool isValid = false;
+
+    while (!isValid)
+    {
+        Console.Write("Enter estimated minutes (e.g., 30, 60, 120): ");
+        string minutesInput = Console.ReadLine();
+
+        // Check if user pressed Enter without typing anything
+        if (string.IsNullOrWhiteSpace(minutesInput))
+        {
+            Console.WriteLine("Error: Input cannot be empty. Please enter a number.");
+            continue;
         }
 
-        // ========================================
-        // VALIDATION METHOD 2: GET VALID SUBJECT
-        // ========================================
-        static string GetValidSubject()
+        // Check for negative sign
+        if (minutesInput.Contains("-"))
         {
-            string userInput = "";
-            bool isValid = false;
-
-            while (!isValid)
-            {
-                Console.Write("Enter subject/category: ");
-                userInput = Console.ReadLine();
-
-                // Check if user pressed Enter without typing anything
-                if (string.IsNullOrWhiteSpace(userInput))
-                {
-                    Console.WriteLine("Error: Subject cannot be empty. Please try again.");
-                }
-                else if (IsOnlyNumbers(userInput.Trim()))
-                {
-                    Console.WriteLine("Error: Subject name cannot be just numbers.");
-                    Console.WriteLine("Please enter a real subject name like 'Math' or 'Physics'.");
-                }
-                else if (HasTooManyRepeatedChars(userInput.Trim()))
-                {
-                    Console.WriteLine("Error: Subject name contains too many repeated characters.");
-                    Console.WriteLine("Please enter a real subject name, not random letters.");
-                }
-                else
-                {
-                    isValid = true;
-                }
-            }
-
-            return userInput.Trim();
+            Console.WriteLine("Error: Minutes cannot be negative.");
+            continue;
         }
 
-        // ========================================
-        // VALIDATION METHOD 3: GET VALID TOPIC
-        // ========================================
-        static string GetValidTopic()
+        bool isNumber = int.TryParse(minutesInput, out validMinutes);
+
+        if (!isNumber)
         {
-            string userInput = "";
-            bool isValid = false;
-
-            while (!isValid)
-            {
-                Console.Write("Enter topic: ");
-                userInput = Console.ReadLine();
-
-                // Check if user pressed Enter without typing anything
-                if (string.IsNullOrWhiteSpace(userInput))
-                {
-                    Console.WriteLine("Error: Topic cannot be empty. Please try again.");
-                }
-                else if (userInput.Trim().Length < 3)
-                {
-                    Console.WriteLine("Error: Topic is too short. Please enter at least 3 characters.");
-                }
-                else if (HasTooManyRepeatedChars(userInput.Trim()))
-                {
-                    Console.WriteLine("Error: Topic contains too many repeated characters.");
-                    Console.WriteLine("Please enter a meaningful topic, not random letters.");
-                }
-                else
-                {
-                    isValid = true;
-                }
-            }
-
-            return userInput.Trim();
+            Console.WriteLine("Error: Please enter a number, not letters or symbols.");
         }
-
-        // ========================================
-        // VALIDATION METHOD 4: GET VALID MINUTES
-        // ========================================
-        static int GetValidMinutes()
+        else if (validMinutes <= 0)
         {
-            int validMinutes = 0;
-            bool isValid = false;
-
-            while (!isValid)
-            {
-                Console.Write("Enter estimated minutes (e.g., 30, 60, 120): ");
-                string minutesInput = Console.ReadLine();
-
-                // Check if user pressed Enter without typing anything
-                if (string.IsNullOrWhiteSpace(minutesInput))
-                {
-                    Console.WriteLine("Error: Input cannot be empty. Please enter a number.");
-                    continue;
-                }
-
-                bool isNumber = int.TryParse(minutesInput, out validMinutes);
-
-                if (!isNumber)
-                {
-                    Console.WriteLine("Error: Please enter a number, not letters or symbols.");
-                }
-                else if (validMinutes <= 0)
-                {
-                    Console.WriteLine("Error: Minutes must be greater than zero.");
-                }
-                else if (validMinutes > 480)
-                {
-                    Console.WriteLine("Error: Minutes cannot exceed 480 (8 hours).");
-                    Console.WriteLine("Reason: This is unrealistic for a single study session.");
-                    Console.WriteLine("Please break your task into smaller sessions.");
-                }
-                else
-                {
-                    isValid = true;
-                }
-            }
-
-            return validMinutes;
+            Console.WriteLine("Error: Minutes must be greater than zero.");
         }
+        else if (validMinutes > 480)
+        {
+            Console.WriteLine("Error: Minutes cannot exceed 480 (8 hours).");
+            Console.WriteLine("Reason: This is unrealistic for a single study session.");
+            Console.WriteLine("Please break your task into smaller sessions.");
+        }
+        else
+        {
+            isValid = true;
+        }
+    }
 
+    return validMinutes;
+}
         // ========================================
         // VALIDATION METHOD 5: GET VALID DATE
         // ========================================
@@ -760,6 +808,66 @@ namespace StudyPlanner
 
             return progress;
         }
+        // ========================================
+        // HELPER METHOD: CHECK FOR NEGATIVE SIGN
+        // ========================================
+        static bool ContainsNegativeSign(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return false;
+            }
+
+            return input.Contains("-");
+        }
+
+        // ========================================
+        // HELPER METHOD: CHECK IF STRING CONTAINS LETTERS
+        // ========================================
+        static bool ContainsLetters(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return false;
+            }
+
+            foreach (char c in input)
+            {
+                if (char.IsLetter(c))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // ========================================
+        // HELPER METHOD: CHECK FOR SPECIAL CHARACTERS
+        // ========================================
+        static bool ContainsSpecialCharacters(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return false;
+            }
+
+            foreach (char c in input)
+            {
+                // Allow only letters, digits, and spaces
+                if (!char.IsLetterOrDigit(c) && c != ' ')
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+
+
+
+
 
         static void ShowHighPriorityTasks(Planner planner)
         {
