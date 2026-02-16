@@ -7,656 +7,839 @@ using System.Threading.Tasks;
 
 namespace StudyPlanner
 {
-    class Program
-    {
-        // Main planner object to store all tasks
-        static Planner myPlanner = new Planner();
-
-        static void Main(string[] args)
+  
+        internal class Program
         {
-            // This is the main program loop - keeps running until user exits
-            bool keepRunning = true;
+            // Main planner object to store all tasks
+            static Planner myPlanner = new Planner();
 
-            while (keepRunning)
+            // Study tips array - Simple student-level feature
+            static string[] studyTips = new string[]
+        {
+      "Take short breaks every 30 minutes to stay focused.",
+      "Review your notes within 24 hours for better retention.",
+      "Study in a quiet place with good lighting.",
+      "Get enough sleep before exams - 7-8 hours is ideal.",
+      "Start with the hardest subject when your mind is fresh."
+        };
+
+            static void Main(string[] args)
             {
-                // Show the menu and get user choice
-                Console.Clear();
-                Console.WriteLine("========================================");
-                Console.WriteLine("   STUDY PLANNER SYSTEM");
-                Console.WriteLine("========================================");
+                // This is the main program loop - keeps running until user exits
+                bool keepRunning = true;
 
-                // Calculate and show current progress
-                double currentProgress = CalculateProgressManually();
-                Console.WriteLine("Current Progress: " + currentProgress + "%");
-                Console.WriteLine("========================================");
-
-                // Display menu options
-                Console.WriteLine("1. Add Study Session");
-                Console.WriteLine("2. Add Deadline Task");
-                Console.WriteLine("3. Show All Tasks");
-                Console.WriteLine("4. Mark Task as Completed");
-                Console.WriteLine("5. Show High Priority Tasks");
-                Console.WriteLine("6.  Search Tasks");
-                Console.WriteLine("7.  Edit Task");
-                Console.WriteLine("8.  Delete Task");
-                Console.WriteLine("9.  Update Task Status");
-                Console.WriteLine("10. Show Overdue Tasks");
-                Console.WriteLine("11. Set Weekly Study Goal");
-                Console.WriteLine("12. Show Upcoming Deadlines (Next 3 Days)");
-                Console.WriteLine("----------------------------------------");
-                Console.WriteLine("0. Exit");
-                Console.WriteLine("========================================");
-                Console.Write("Enter your choice (0-12): ");
-
-                // Read user input
-                string userChoice = Console.ReadLine().Trim();
-
-                // Process user choice using if-else
-                if (userChoice == "1")
+                while (keepRunning)
                 {
-                    AddStudySession();
-                }
-                else if (userChoice == "2")
-                {
-                    AddDeadlineTask();
-                }
-                else if (userChoice == "3")
-                {
-                    ShowAllTasks();
-                }
-                else if (userChoice == "4")
-                {
-                    MarkTaskCompleted();
-                }
-                else if (userChoice == "5")
-                {
-                    ShowHighPriorityTasks(myPlanner);
-                }
-                else if (userChoice == "6")
-                {
-                    SearchTasks();
-                }
-                else if (userChoice == "7")
-                {
-                    EditTask();
-                }
-                else if (userChoice == "8")
-                {
-                    DeleteTask();
-                }
-                else if (userChoice == "9")
-                {
-                    UpdateTaskStatus();
-                }
-                else if (userChoice == "10")
-                {
-                    ShowOverdueTasks();
-                }
-                else if (userChoice == "11")
-                {
-                    SetWeeklyGoal();
-                }
-                else if (userChoice == "12")
-                {
-                    ShowUpcomingDeadlines();
-                }
-                else if (userChoice == "0")
-                {
-                    Console.WriteLine("\n========================================");
-                    Console.WriteLine("Thank you for using Study Planner!");
+                    // Show the menu and get user choice
+                    Console.Clear();
                     Console.WriteLine("========================================");
-                    keepRunning = false;
-                }
-                else
-                {
-                    Console.WriteLine("\nError: Please enter a number between 0 and 12.");
-                    Console.WriteLine("Press any key to continue...");
-                    Console.ReadKey();
-                }
-            }
-        }
+                    Console.WriteLine("   STUDY PLANNER SYSTEM");
+                    Console.WriteLine("========================================");
 
-        // ========================================
-        // METHOD 1: ADD STUDY SESSION
-        // ========================================
-        static void AddStudySession()
-        {
-            Console.Clear();
-            Console.WriteLine("========================================");
-            Console.WriteLine("   ADD NEW STUDY SESSION");
-            Console.WriteLine("========================================");
+                    // Display a random study tip
+                    DisplayRandomTip();
 
-            // Step 1: Get and validate Title
-            string taskTitle = GetValidTitle();
+                    // Calculate and show current progress
+                    double currentProgress = CalculateProgressManually();
+                    Console.WriteLine("Current Progress: " + currentProgress + "%");
+                    Console.WriteLine("========================================");
 
-            // Step 2: Get and validate Subject/Category
-            string taskSubject = GetValidSubject();
+                    // Display menu options
+                    Console.WriteLine("1. Add Study Session");
+                    Console.WriteLine("2. Add Deadline Task");
+                    Console.WriteLine("3. Show All Tasks");
+                    Console.WriteLine("4. Mark Task as Completed");
+                    Console.WriteLine("5. Filter Tasks by Priority");
+                    Console.WriteLine("6. Exit");
+                    Console.WriteLine("========================================");
+                    Console.Write("Enter your choice (1-6): ");
 
-            // Step 3: Get and validate Topic
-            string taskTopic = GetValidTopic();
+                    // Read user input
+                    string userChoice = Console.ReadLine();
 
-            // Step 4: Get and validate Minutes
-            int taskMinutes = GetValidMinutes();
-
-            // Step 5: Get and validate Date
-            DateTime taskDate = GetValidDate();
-
-            // Step 6: Get and validate Priority
-            Priority taskPriority = GetValidPriority();
-
-            // Try to create the study session
-            try
-            {
-                StudySession newSession = new StudySession(
-                    taskDate,
-                    taskTitle,
-                    taskSubject,
-                    taskMinutes,
-                    taskPriority,
-                    taskTopic
-                );
-
-                myPlanner.AddItem(newSession);
-
-                Console.WriteLine("\n*** SUCCESS! ***");
-                Console.WriteLine("Study session added successfully!");
-                Console.WriteLine("Details: " + newSession.GetDetails());
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("\nError: Could not add the session.");
-                Console.WriteLine("Reason: " + ex.Message);
-            }
-
-            Console.WriteLine("\nPress any key to continue...");
-            Console.ReadKey();
-        }
-
-        // ========================================
-        // METHOD 2: ADD DEADLINE TASK
-        // ========================================
-        static void AddDeadlineTask()
-        {
-            Console.Clear();
-            Console.WriteLine("========================================");
-            Console.WriteLine("   ADD NEW DEADLINE TASK");
-            Console.WriteLine("========================================");
-
-            // Step 1: Get and validate Title
-            string taskTitle = GetValidTitle();
-
-            // Step 2: Get and validate Subject
-            string taskSubject = GetValidSubject();
-
-            // Step 3: Get and validate Minutes
-            int taskMinutes = GetValidMinutes();
-
-            // Step 4: Get and validate Date
-            DateTime taskDate = GetValidDate();
-
-            // Step 5: Get and validate Task Type
-            TaskType taskType = GetValidTaskType();
-
-            // Step 6: Get and validate Priority
-            Priority taskPriority = GetValidPriority();
-
-            // Try to create the deadline task
-            try
-            {
-                DeadlineTask newTask = new DeadlineTask(
-                    taskDate,
-                    taskTitle,
-                    taskSubject,
-                    taskMinutes,
-                    taskType,
-                    taskPriority
-                );
-
-                myPlanner.AddItem(newTask);
-
-                Console.WriteLine("\n*** SUCCESS! ***");
-                Console.WriteLine("Deadline task added successfully!");
-                Console.WriteLine("Details: " + newTask.GetDetails());
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("\nError: Could not add the task.");
-                Console.WriteLine("Reason: " + ex.Message);
-            }
-
-            Console.WriteLine("\nPress any key to continue...");
-            Console.ReadKey();
-        }
-
-        // ========================================
-        // METHOD 3: SHOW ALL TASKS
-        // ========================================
-        static void ShowAllTasks()
-        {
-            Console.Clear();
-            Console.WriteLine("========================================");
-            Console.WriteLine("   ALL TASKS");
-            Console.WriteLine("========================================");
-
-            // Check if there are any tasks
-            if (myPlanner.Items.Count == 0)
-            {
-                Console.WriteLine("No tasks found. The list is empty.");
-            }
-            else
-            {
-                // Loop through all tasks and display them
-                int taskNumber = 1;
-                for (int i = 0; i < myPlanner.Items.Count; i++)
-                {
-                    PlannerItem currentTask = myPlanner.Items[i];
-
-                    // Show task number and status
-                    if (currentTask.IsCompleted)
+                    // Process user choice using if-else
+                    if (userChoice == "1")
                     {
-                        Console.Write("[DONE] ");
+                        AddStudySession();
+                    }
+                    else if (userChoice == "2")
+                    {
+                        AddDeadlineTask();
+                    }
+                    else if (userChoice == "3")
+                    {
+                        ShowAllTasks();
+                    }
+                    else if (userChoice == "4")
+                    {
+                        MarkTaskCompleted();
+                    }
+                    else if (userChoice == "5")
+                    {
+                        FilterTasksByPriority();
+                    }
+                    else if (userChoice == "6")
+                    {
+                        Console.WriteLine("\nThank you for using Study Planner!");
+                        keepRunning = false;
                     }
                     else
                     {
-                        Console.Write("[TODO] ");
+                        Console.WriteLine("\nError: Please enter a number between 1 and 6.");
+                        Console.WriteLine("Press any key to continue...");
+                        Console.ReadKey();
+                    }
+                }
+            }
+
+
+            // HELPER METHOD: DISPLAY RANDOM TIP
+
+            static void DisplayRandomTip()
+            {
+                Random random = new Random();
+                int randomIndex = random.Next(studyTips.Length);
+                Console.WriteLine("Note: " + studyTips[randomIndex]);
+                Console.WriteLine();
+            }
+
+
+            // METHOD 1: ADD STUDY SESSION
+
+            static void AddStudySession()
+            {
+                Console.Clear();
+                Console.WriteLine("========================================");
+                Console.WriteLine("   ADD NEW STUDY SESSION");
+                Console.WriteLine("========================================");
+
+                // Get and validate all inputs
+                string taskTitle = GetValidTitle();
+                string taskSubject = GetValidSubject();
+                string taskTopic = GetValidTopic();
+                int taskMinutes = GetValidMinutes();
+                DateTime taskDate = GetValidDate();
+                Priority taskPriority = GetValidPriority();
+
+                // Try to create the study session
+                try
+                {
+                    StudySession newSession = new StudySession(
+                      taskDate,
+                      taskTitle,
+                      taskSubject,
+                      taskMinutes,
+                      taskPriority,
+                      taskTopic
+                    );
+
+                    myPlanner.AddItem(newSession);
+
+                    Console.WriteLine("\n*** SUCCESS! ***");
+                    Console.WriteLine("Study session added successfully!");
+                    Console.WriteLine("Details: " + newSession.GetDetails());
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("\nError: Could not add the session.");
+                    Console.WriteLine("Reason: " + ex.Message);
+                }
+
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+            }
+
+            // METHOD 2: ADD DEADLINE TASK
+
+            static void AddDeadlineTask()
+            {
+                Console.Clear();
+                Console.WriteLine("========================================");
+                Console.WriteLine("   ADD NEW DEADLINE TASK");
+                Console.WriteLine("========================================");
+
+                // Get and validate all inputs
+                string taskTitle = GetValidTitle();
+                string taskSubject = GetValidSubject();
+                int taskMinutes = GetValidMinutes();
+                DateTime taskDate = GetValidDate();
+                TaskType taskType = GetValidTaskType();
+                Priority taskPriority = GetValidPriority();
+
+                // Try to create the deadline task
+                try
+                {
+                    DeadlineTask newTask = new DeadlineTask(
+                      taskDate,
+                      taskTitle,
+                      taskSubject,
+                      taskMinutes,
+                      taskType,
+                      taskPriority
+                    );
+
+                    myPlanner.AddItem(newTask);
+
+                    Console.WriteLine("\n*** SUCCESS! ***");
+                    Console.WriteLine("Deadline task added successfully!");
+                    Console.WriteLine("Details: " + newTask.GetDetails());
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("\nError: Could not add the task.");
+                    Console.WriteLine("Reason: " + ex.Message);
+                }
+
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+            }
+
+            // METHOD 3: SHOW ALL TASKS
+
+            static void ShowAllTasks()
+            {
+                Console.Clear();
+                Console.WriteLine("========================================");
+                Console.WriteLine("   ALL TASKS");
+                Console.WriteLine("========================================");
+
+                // Check if there are any tasks
+                if (myPlanner.Items.Count == 0)
+                {
+                    Console.WriteLine("No tasks found. The list is empty.");
+                }
+                else
+                {
+                    // Loop through all tasks and display them
+                    int taskNumber = 1;
+                    for (int i = 0; i < myPlanner.Items.Count; i++)
+                    {
+                        PlannerItem currentTask = myPlanner.Items[i];
+
+                        // Show task number and status
+                        if (currentTask.IsCompleted)
+                        {
+                            Console.Write("[DONE] ");
+                        }
+                        else
+                        {
+                            Console.Write("[TODO] ");
+                        }
+
+                        Console.WriteLine(taskNumber + ". " + currentTask.GetDetails());
+                        taskNumber++;
                     }
 
-                    Console.WriteLine(taskNumber + ". " + currentTask.GetDetails());
-                    taskNumber++;
+                    Console.WriteLine("========================================");
+                    Console.WriteLine("Total tasks: " + myPlanner.Items.Count);
                 }
 
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+            }
+
+            // METHOD 4: MARK TASK AS COMPLETED
+
+            static void MarkTaskCompleted()
+            {
+                Console.Clear();
                 Console.WriteLine("========================================");
-                Console.WriteLine("Total tasks: " + myPlanner.Items.Count);
-            }
+                Console.WriteLine("   MARK TASK AS COMPLETED");
+                Console.WriteLine("========================================");
 
-            Console.WriteLine("\nPress any key to continue...");
-            Console.ReadKey();
-        }
-
-        // ========================================
-        // METHOD 4: MARK TASK AS COMPLETED
-        // ========================================
-        static void MarkTaskCompleted()
-        {
-            Console.Clear();
-            Console.WriteLine("========================================");
-            Console.WriteLine("   MARK TASK AS COMPLETED");
-            Console.WriteLine("========================================");
-
-            // Check if there are any tasks
-            if (myPlanner.Items.Count == 0)
-            {
-                Console.WriteLine("No tasks found. The list is empty.");
-                Console.WriteLine("\nPress any key to continue...");
-                Console.ReadKey();
-                return;
-            }
-
-            // Show all incomplete tasks
-            Console.WriteLine("Incomplete tasks:\n");
-
-            int displayNumber = 1;
-            for (int i = 0; i < myPlanner.Items.Count; i++)
-            {
-                PlannerItem currentTask = myPlanner.Items[i];
-                if (!currentTask.IsCompleted)
+                // Check if there are any tasks
+                if (myPlanner.Items.Count == 0)
                 {
-                    Console.WriteLine(displayNumber + ". " + currentTask.Title + " (" + currentTask.Category + ")");
-                    displayNumber++;
+                    Console.WriteLine("No tasks found. The list is empty.");
+                    Console.WriteLine("\nPress any key to continue...");
+                    Console.ReadKey();
+                    return;
                 }
-            }
 
-            // If all tasks are completed
-            if (displayNumber == 1)
-            {
-                Console.WriteLine("All tasks are already completed! Great job!");
-                Console.WriteLine("\nPress any key to continue...");
-                Console.ReadKey();
-                return;
-            }
+                // Show all incomplete tasks
+                Console.WriteLine("Incomplete tasks:\n");
 
-            // Get task number to mark as complete
-            Console.Write("\nEnter task number to mark as completed: ");
-            string taskNumberInput = Console.ReadLine();
-
-            // Validate the input
-            int selectedTaskNumber;
-            bool isValidNumber = int.TryParse(taskNumberInput, out selectedTaskNumber);
-
-            if (!isValidNumber)
-            {
-                Console.WriteLine("Error: Please enter a valid number.");
-            }
-            else if (selectedTaskNumber < 1 || selectedTaskNumber >= displayNumber)
-            {
-                Console.WriteLine("Error: Task number out of range.");
-            }
-            else
-            {
-                // Find and mark the task as completed
-                int incompleteCounter = 0;
+                int displayNumber = 1;
                 for (int i = 0; i < myPlanner.Items.Count; i++)
                 {
                     PlannerItem currentTask = myPlanner.Items[i];
                     if (!currentTask.IsCompleted)
                     {
-                        incompleteCounter++;
-                        if (incompleteCounter == selectedTaskNumber)
+                        Console.WriteLine(displayNumber + ". " + currentTask.Title + " (" + currentTask.Category + ")");
+                        displayNumber++;
+                    }
+                }
+
+                // If all tasks are completed
+                if (displayNumber == 1)
+                {
+                    Console.WriteLine("All tasks are already completed! Great job!");
+                    Console.WriteLine("\nPress any key to continue...");
+                    Console.ReadKey();
+                    return;
+                }
+
+                // Get task number to mark as complete
+                Console.Write("\nEnter task number to mark as completed: ");
+                string taskNumberInput = Console.ReadLine();
+
+                // Validate the input
+                int selectedTaskNumber;
+                bool isValidNumber = int.TryParse(taskNumberInput, out selectedTaskNumber);
+
+                if (!isValidNumber)
+                {
+                    Console.WriteLine("Error: Please enter a valid number.");
+                }
+                else if (selectedTaskNumber < 1 || selectedTaskNumber >= displayNumber)
+                {
+                    Console.WriteLine("Error: Task number out of range.");
+                }
+                else
+                {
+                    // Find and mark the task as completed
+                    int incompleteCounter = 0;
+                    for (int i = 0; i < myPlanner.Items.Count; i++)
+                    {
+                        PlannerItem currentTask = myPlanner.Items[i];
+                        if (!currentTask.IsCompleted)
                         {
-                            currentTask.MarkCompleted();
-                            Console.WriteLine("\n*** SUCCESS! ***");
-                            Console.WriteLine("Task marked as completed: " + currentTask.Title);
-                            break;
+                            incompleteCounter++;
+                            if (incompleteCounter == selectedTaskNumber)
+                            {
+                                currentTask.MarkCompleted();
+                                Console.WriteLine("\n*** SUCCESS! ***");
+                                Console.WriteLine("Task marked as completed: " + currentTask.Title);
+                                break;
+                            }
                         }
                     }
                 }
+
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
             }
 
-            Console.WriteLine("\nPress any key to continue...");
-            Console.ReadKey();
-        }
+            // METHOD 5: FILTER TASKS BY PRIORITY 
 
-        // ========================================
-        // VALIDATION METHOD 1: GET VALID TITLE
-        // ========================================
-        // This method keeps asking until user enters a valid title
-        static string GetValidTitle()
-        {
-            string userInput = "";
-            bool isValid = false;
-
-            while (!isValid)
+            static void FilterTasksByPriority()
             {
-                Console.Write("Enter task title: ");
-                userInput = Console.ReadLine();
+                Console.Clear();
+                Console.WriteLine("========================================");
+                Console.WriteLine("   FILTER TASKS BY PRIORITY");
+                Console.WriteLine("========================================");
 
-                // Check if input is empty or just spaces
-                if (userInput == null || userInput.Trim() == "")
+                // Check if there are any tasks
+                if (myPlanner.Items.Count == 0)
                 {
-                    Console.WriteLine("Error: Title cannot be empty. Please try again.");
+                    Console.WriteLine("No tasks found. The list is empty.");
+                    Console.WriteLine("\nPress any key to continue...");
+                    Console.ReadKey();
+                    return;
+                }
+
+                // Ask user which priority level to filter
+                Console.WriteLine("\nSelect priority level to filter:");
+                Console.WriteLine("1. High Priority Only");
+                Console.WriteLine("2. Medium Priority Only");
+                Console.WriteLine("3. Low Priority Only");
+                Console.WriteLine("4. Show All Tasks (No Filter)");
+                Console.Write("Enter your choice (1-4): ");
+
+                string filterChoice = Console.ReadLine();
+
+                // Variables to store filter selection
+                Priority? selectedPriority = null;
+                string priorityName = "";
+                bool showAll = false;
+
+                // Determine which priority to filter by
+                if (filterChoice == "1")
+                {
+                    selectedPriority = Priority.High;
+                    priorityName = "High";
+                }
+                else if (filterChoice == "2")
+                {
+                    selectedPriority = Priority.Medium;
+                    priorityName = "Medium";
+                }
+                else if (filterChoice == "3")
+                {
+                    selectedPriority = Priority.Low;
+                    priorityName = "Low";
+                }
+                else if (filterChoice == "4")
+                {
+                    showAll = true;
                 }
                 else
                 {
-                    isValid = true;
+                    Console.WriteLine("\nError: Invalid choice. Please enter a number between 1 and 4.");
+                    Console.WriteLine("Press any key to continue...");
+                    Console.ReadKey();
+                    return;
                 }
-            }
 
-            return userInput.Trim();
-        }
-
-        // ========================================
-        // VALIDATION METHOD 2: GET VALID SUBJECT
-        // ========================================
-        static string GetValidSubject()
-        {
-            string userInput = "";
-            bool isValid = false;
-
-            while (!isValid)
-            {
-                Console.Write("Enter subject/category: ");
-                userInput = Console.ReadLine();
-
-                // Check if input is empty or just spaces
-                if (userInput == null || userInput.Trim() == "")
+                // Display header
+                Console.WriteLine("\n========================================");
+                if (showAll)
                 {
-                    Console.WriteLine("Error: Subject cannot be empty. Please try again.");
+                    Console.WriteLine("   ALL TASKS (NO FILTER)");
                 }
                 else
                 {
-                    isValid = true;
+                    Console.WriteLine("   " + priorityName.ToUpper() + " PRIORITY TASKS");
                 }
-            }
+                Console.WriteLine("========================================\n");
 
-            return userInput.Trim();
-        }
+                // Filter and display tasks
+                int taskCount = 0;
 
-        // ========================================
-        // VALIDATION METHOD 3: GET VALID TOPIC
-        // ========================================
-        static string GetValidTopic()
-        {
-            string userInput = "";
-            bool isValid = false;
-
-            while (!isValid)
-            {
-                Console.Write("Enter topic: ");
-                userInput = Console.ReadLine();
-
-                // Check if input is empty or just spaces
-                if (userInput == null || userInput.Trim() == "")
+                if (showAll)
                 {
-                    Console.WriteLine("Error: Topic cannot be empty. Please try again.");
+                    // Show all tasks (no filter)
+                    int taskNumber = 1;
+                    foreach (PlannerItem task in myPlanner.Items)
+                    {
+                        // Display task status
+                        if (task.IsCompleted)
+                        {
+                            Console.Write("[DONE] ");
+                        }
+                        else
+                        {
+                            Console.Write("[TODO] ");
+                        }
+
+                        Console.WriteLine(taskNumber + ". " + task.GetDetails());
+                        taskNumber++;
+                        taskCount++;
+                    }
                 }
                 else
                 {
-                    isValid = true;
+                    // Use the GetItemsByPriority method from Planner class
+                    List<PlannerItem> filteredTasks = myPlanner.GetItemsByPriority(selectedPriority.Value);
+
+                    if (filteredTasks.Count == 0)
+                    {
+                        Console.WriteLine("No tasks found with " + priorityName + " priority.");
+                    }
+                    else
+                    {
+                        int taskNumber = 1;
+                        foreach (PlannerItem task in filteredTasks)
+                        {
+                            // Display task status
+                            if (task.IsCompleted)
+                            {
+                                Console.Write("[DONE] ");
+                            }
+                            else
+                            {
+                                Console.Write("[TODO] ");
+                            }
+
+                            Console.WriteLine(taskNumber + ". " + task.GetDetails());
+                            taskNumber++;
+                            taskCount++;
+                        }
+                    }
                 }
+
+                // Display summary
+                if (taskCount > 0)
+                {
+                    Console.WriteLine("\n========================================");
+                    Console.WriteLine("Total tasks shown: " + taskCount);
+                    Console.WriteLine("========================================");
+                }
+
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
             }
 
-            return userInput.Trim();
-        }
+            // VALIDATION METHOD 1: GET VALID TITLE (FIXED)
 
-        // ========================================
-        // VALIDATION METHOD 4: GET VALID MINUTES
-        // ========================================
-        // This is MY MAIN CONTRIBUTION - Manual validation using TryParse
-        static int GetValidMinutes()
-        {
-            int validMinutes = 0;
-            bool isValid = false;
-
-            while (!isValid)
+            static string GetValidTitle()
             {
-                Console.Write("Enter estimated minutes (e.g., 30, 60, 120): ");
-                string minutesInput = Console.ReadLine();
+                string userInput = "";
+                bool isValid = false;
 
-                // Try to convert the input to a number
-                bool isNumber = int.TryParse(minutesInput, out validMinutes);
+                while (!isValid)
+                {
+                    Console.Write("Enter task title: ");
+                    userInput = Console.ReadLine();
 
-                if (!isNumber)
-                {
-                    // User entered letters or special characters
-                    Console.WriteLine("Error: Please enter a number, not letters or symbols.");
+                    if (userInput == null || userInput.Trim() == "")
+                    {
+                        Console.WriteLine("Error: Title cannot be empty. Please try again.");
+                    }
+                    else if (userInput.Trim().Length < 3)
+                    {
+                        Console.WriteLine("Error: Title is too short. Please enter at least 3 characters.");
+                        Console.WriteLine("Example: 'Review Math' or 'Study Chapter 5'");
+                    }
+                    else if (IsOnlyNumbers(userInput.Trim()))
+                    {
+                        Console.WriteLine("Error: Title cannot be just numbers. Please add a description.");
+                        Console.WriteLine("Example: Instead of '4', write 'Chapter 4 Review'");
+                    }
+                    else if (HasTooManyRepeatedChars(userInput.Trim()))
+                    {
+                        Console.WriteLine("Error: Title contains too many repeated characters.");
+                        Console.WriteLine("Please enter a meaningful title, not random letters.");
+                    }
+                    else
+                    {
+                        isValid = true;
+                    }
                 }
-                else if (validMinutes <= 0)
-                {
-                    // User entered zero or negative number
-                    Console.WriteLine("Error: Minutes must be greater than zero.");
-                }
-                else if (validMinutes > 999)
-                {
-                    // User entered a very large number
-                    Console.WriteLine("Error: Minutes cannot exceed 999. Please enter a reasonable value.");
-                }
-                else
-                {
-                    // Input is valid
-                    isValid = true;
-                }
+
+                return userInput.Trim();
             }
 
-            return validMinutes;
-        }
 
-        // ========================================
-        // VALIDATION METHOD 5: GET VALID DATE
-        // ========================================
-        // This ensures date is in correct format and not in the past
-        static DateTime GetValidDate()
-        {
-            DateTime validDate = DateTime.Today;
-            bool isValid = false;
+            // VALIDATION METHOD 2: GET VALID SUBJECT (FIXED)
 
-            while (!isValid)
+            static string GetValidSubject()
             {
-                Console.Write("Enter date (dd/MM/yyyy, e.g., 25/12/2024): ");
-                string dateInput = Console.ReadLine();
+                string userInput = "";
+                bool isValid = false;
 
-                // Try to parse the date in the exact format
-                bool isValidFormat = DateTime.TryParseExact(
-                    dateInput,
-                    "dd/MM/yyyy",
-                    null,
-                    System.Globalization.DateTimeStyles.None,
-                    out validDate
-                );
+                while (!isValid)
+                {
+                    Console.Write("Enter subject/category: ");
+                    userInput = Console.ReadLine();
 
-                if (!isValidFormat)
-                {
-                    // Date format is wrong
-                    Console.WriteLine("Error: Date format is incorrect.");
-                    Console.WriteLine("Please use dd/MM/yyyy format (e.g., 25/12/2024).");
+                    if (userInput == null || userInput.Trim() == "")
+                    {
+                        Console.WriteLine("Error: Subject cannot be empty. Please try again.");
+                    }
+                    else if (IsOnlyNumbers(userInput.Trim()))
+                    {
+                        Console.WriteLine("Error: Subject name cannot be just numbers.");
+                        Console.WriteLine("Please enter a real subject name like 'Math' or 'Physics'.");
+                    }
+                    else if (HasTooManyRepeatedChars(userInput.Trim()))
+                    {
+                        Console.WriteLine("Error: Subject name contains too many repeated characters.");
+                        Console.WriteLine("Please enter a real subject name, not random letters.");
+                    }
+                    else
+                    {
+                        isValid = true;
+                    }
                 }
-                else if (validDate.Date < DateTime.Today)
-                {
-                    // Date is in the past
-                    Console.WriteLine("Error: You cannot add a task with a past date.");
-                    Console.WriteLine("Today's date is: " + DateTime.Today.ToString("dd/MM/yyyy"));
-                    Console.WriteLine("Please enter today's date or a future date.");
-                }
-                else
-                {
-                    // Date is valid
-                    isValid = true;
-                }
+
+                return userInput.Trim();
             }
 
-            return validDate;
-        }
+            // HELPER METHOD: CHECK IF STRING IS ONLY NUMBERS
 
-        // ========================================
-        // VALIDATION METHOD 6: GET VALID PRIORITY
-        // ========================================
-        static Priority GetValidPriority()
-        {
-            Priority validPriority = Priority.Medium;
-            bool isValid = false;
-
-            while (!isValid)
+            static bool IsOnlyNumbers(string input)
             {
-                Console.WriteLine("\nSelect priority:");
-                Console.WriteLine("1. Low");
-                Console.WriteLine("2. Medium");
-                Console.WriteLine("3. High");
-                Console.Write("Enter your choice (1-3): ");
+                if (input == "")
+                {
+                    return false;
+                }
 
-                string priorityInput = Console.ReadLine();
+                foreach (char c in input)
+                {
+                    if (!char.IsDigit(c))
+                    {
+                        return false;
+                    }
+                }
 
-                // Try to convert to number
-                int priorityNumber;
-                bool isNumber = int.TryParse(priorityInput, out priorityNumber);
-
-                if (!isNumber)
-                {
-                    Console.WriteLine("Error: Please enter a number (1, 2, or 3).");
-                }
-                else if (priorityNumber == 1)
-                {
-                    validPriority = Priority.Low;
-                    isValid = true;
-                }
-                else if (priorityNumber == 2)
-                {
-                    validPriority = Priority.Medium;
-                    isValid = true;
-                }
-                else if (priorityNumber == 3)
-                {
-                    validPriority = Priority.High;
-                    isValid = true;
-                }
-                else
-                {
-                    Console.WriteLine("Error: Invalid choice. Please enter 1, 2, or 3.");
-                }
+                return true;
             }
 
-            return validPriority;
-        }
 
-        // ========================================
-        // VALIDATION METHOD 7: GET VALID TASK TYPE
-        // ========================================
-        static TaskType GetValidTaskType()
-        {
-            TaskType validTaskType = TaskType.Assignment;
-            bool isValid = false;
+            // HELPER METHOD: CHECK FOR REPEATED CHARACTERS
 
-            while (!isValid)
+            static bool HasTooManyRepeatedChars(string input)
             {
-                Console.WriteLine("\nSelect task type:");
-                Console.WriteLine("1. Assignment");
-                Console.WriteLine("2. Quiz");
-                Console.WriteLine("3. Exam");
-                Console.Write("Enter your choice (1-3): ");
+                // Count how many different characters exist in the input
+                if (input.Length == 0)
+                {
+                    return false;
+                }
 
-                string typeInput = Console.ReadLine();
+                // Use a simple method to count unique characters
+                string uniqueChars = "";
 
-                // Try to convert to number
-                int typeNumber;
-                bool isNumber = int.TryParse(typeInput, out typeNumber);
+                foreach (char c in input)
+                {
+                    bool found = false;
+                    foreach (char unique in uniqueChars)
+                    {
+                        if (c == unique)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
 
-                if (!isNumber)
-                {
-                    Console.WriteLine("Error: Please enter a number (1, 2, or 3).");
+                    if (!found)
+                    {
+                        uniqueChars = uniqueChars + c;
+                    }
                 }
-                else if (typeNumber == 1)
+
+                // If less than 2 unique characters, reject
+                if (uniqueChars.Length < 2)
                 {
-                    validTaskType = TaskType.Assignment;
-                    isValid = true;
+                    return true; // Not enough variety - REJECT
                 }
-                else if (typeNumber == 2)
-                {
-                    validTaskType = TaskType.Quiz;
-                    isValid = true;
-                }
-                else if (typeNumber == 3)
-                {
-                    validTaskType = TaskType.Exam;
-                    isValid = true;
-                }
-                else
-                {
-                    Console.WriteLine("Error: Invalid choice. Please enter 1, 2, or 3.");
-                }
+
+                return false; // Input is valid - has variety
             }
 
-            return validTaskType;
-        }
 
-        // ========================================
-        // HELPER METHOD: CALCULATE PROGRESS MANUALLY
-        // ========================================
-        // This method calculates progress using a simple loop
-        static double CalculateProgressManually()
-        {
-            // If there are no tasks, progress is 0%
-            if (myPlanner.Items.Count == 0)
+            // VALIDATION METHOD 3: GET VALID TOPIC (FIXED)
+
+            static string GetValidTopic()
             {
-                return 0.0;
-            }
+                string userInput = "";
+                bool isValid = false;
 
-            // Count how many tasks are completed
-            int completedCount = 0;
-            for (int i = 0; i < myPlanner.Items.Count; i++)
-            {
-                if (myPlanner.Items[i].IsCompleted)
+                while (!isValid)
                 {
-                    completedCount++;
+                    Console.Write("Enter topic: ");
+                    userInput = Console.ReadLine();
+
+                    if (userInput == null || userInput.Trim() == "")
+                    {
+                        Console.WriteLine("Error: Topic cannot be empty. Please try again.");
+                    }
+                    else if (userInput.Trim().Length < 3)
+                    {
+                        Console.WriteLine("Error: Topic is too short. Please enter at least 3 characters.");
+                    }
+                    else if (HasTooManyRepeatedChars(userInput.Trim()))
+                    {
+                        Console.WriteLine("Error: Topic contains too many repeated characters.");
+                        Console.WriteLine("Please enter a meaningful topic, not random letters.");
+                    }
+                    else
+                    {
+                        isValid = true;
+                    }
                 }
+
+                return userInput.Trim();
             }
 
-            // Calculate percentage
-            double totalTasks = myPlanner.Items.Count;
-            double progress = (completedCount / totalTasks) * 100.0;
+            // VALIDATION METHOD 4: GET VALID MINUTES (FIXED)
 
-            // Round to 2 decimal places manually
-            progress = Math.Round(progress, 2);
+            static int GetValidMinutes()
+            {
+                int validMinutes = 0;
+                bool isValid = false;
 
-            return progress;
-        }
+                while (!isValid)
+                {
+                    Console.Write("Enter estimated minutes (e.g., 30, 60, 120): ");
+                    string minutesInput = Console.ReadLine();
+
+                    bool isNumber = int.TryParse(minutesInput, out validMinutes);
+
+                    if (!isNumber)
+                    {
+                        Console.WriteLine("Error: Please enter a number, not letters or symbols.");
+                    }
+                    else if (validMinutes <= 0)
+                    {
+                        Console.WriteLine("Error: Minutes must be greater than zero.");
+                    }
+                    else if (validMinutes > 480)
+                    {
+                        Console.WriteLine("Error: Minutes cannot exceed 480 (8 hours).");
+                        Console.WriteLine("Reason: This is unrealistic for a single study session.");
+                        Console.WriteLine("Please break your task into smaller sessions.");
+                    }
+                    else
+                    {
+                        isValid = true;
+                    }
+                }
+
+                return validMinutes;
+            }
+
+            // VALIDATION METHOD 5: GET VALID DATE (FIXED)
+
+            static DateTime GetValidDate()
+            {
+                DateTime validDate = DateTime.Today;
+                bool isValid = false;
+
+                while (!isValid)
+                {
+                    Console.Write("Enter date (dd/MM/yyyy, e.g., 25/03/2026): ");
+                    string dateInput = Console.ReadLine();
+
+                    bool isValidFormat = DateTime.TryParseExact(
+                      dateInput,
+                      "dd/MM/yyyy",
+                      null,
+                      System.Globalization.DateTimeStyles.None,
+                      out validDate
+                    );
+
+                    if (!isValidFormat)
+                    {
+                        Console.WriteLine("Error: Date format is incorrect.");
+                        Console.WriteLine("Reason: Day, month, or year is invalid, or wrong separators used.");
+                        Console.WriteLine("Please use dd/MM/yyyy format (e.g., 25/03/2026).");
+                    }
+                    else if (validDate.Date < DateTime.Today)
+                    {
+                        Console.WriteLine("Error: You cannot add a task with a past date.");
+                        Console.WriteLine("Reason: This task should have been completed already.");
+                        Console.WriteLine("Today's date is: " + DateTime.Today.ToString("dd/MM/yyyy"));
+                        Console.WriteLine("Please enter today's date or a future date.");
+                    }
+                    else
+                    {
+                        isValid = true;
+                    }
+                }
+
+                return validDate;
+            }
+
+            // VALIDATION METHOD 6: GET VALID PRIORITY (FIXED)
+
+            static Priority GetValidPriority()
+            {
+                Priority validPriority = Priority.Medium;
+                bool isValid = false;
+
+                while (!isValid)
+                {
+                    Console.WriteLine("\nSelect priority:");
+                    Console.WriteLine("1. Low");
+                    Console.WriteLine("2. Medium");
+                    Console.WriteLine("3. High");
+                    Console.Write("Enter your choice (1-3): ");
+
+                    string priorityInput = Console.ReadLine();
+
+                    int priorityNumber;
+                    bool isNumber = int.TryParse(priorityInput, out priorityNumber);
+
+                    if (!isNumber)
+                    {
+                        Console.WriteLine("Error: Please enter a number (1, 2, or 3).");
+                    }
+                    else if (priorityNumber < 1 || priorityNumber > 3)
+                    {
+                        Console.WriteLine("Error: Invalid choice. Number must be between 1 and 3.");
+                        Console.WriteLine("Reason: Only 3 priority levels are available.");
+                        Console.WriteLine("Please enter 1 for Low, 2 for Medium, or 3 for High.");
+                    }
+                    else if (priorityNumber == 1)
+                    {
+                        validPriority = Priority.Low;
+                        isValid = true;
+                    }
+                    else if (priorityNumber == 2)
+                    {
+                        validPriority = Priority.Medium;
+                        isValid = true;
+                    }
+                    else if (priorityNumber == 3)
+                    {
+                        validPriority = Priority.High;
+                        isValid = true;
+                    }
+                }
+
+                return validPriority;
+            }
+
+
+            // VALIDATION METHOD 7: GET VALID TASK TYPE (FIXED)
+
+            static TaskType GetValidTaskType()
+            {
+                TaskType validTaskType = TaskType.Assignment;
+                bool isValid = false;
+
+                while (!isValid)
+                {
+                    Console.WriteLine("\nSelect task type:");
+                    Console.WriteLine("1. Assignment");
+                    Console.WriteLine("2. Quiz");
+                    Console.WriteLine("3. Exam");
+                    Console.Write("Enter your choice (1-3): ");
+
+                    string typeInput = Console.ReadLine();
+
+                    int typeNumber;
+                    bool isNumber = int.TryParse(typeInput, out typeNumber);
+
+                    if (!isNumber)
+                    {
+                        Console.WriteLine("Error: Please enter a number (1, 2, or 3).");
+                    }
+                    else if (typeNumber < 1 || typeNumber > 3)
+                    {
+                        Console.WriteLine("Error: Invalid choice. Number must be between 1 and 3.");
+                        Console.WriteLine("Reason: Only 3 task types are available.");
+                        Console.WriteLine("Please enter 1 for Assignment, 2 for Quiz, or 3 for Exam.");
+                    }
+                    else if (typeNumber == 1)
+                    {
+                        validTaskType = TaskType.Assignment;
+                        isValid = true;
+                    }
+                    else if (typeNumber == 2)
+                    {
+                        validTaskType = TaskType.Quiz;
+                        isValid = true;
+                    }
+                    else if (typeNumber == 3)
+                    {
+                        validTaskType = TaskType.Exam;
+                        isValid = true;
+                    }
+                }
+
+                return validTaskType;
+            }
+
+
+            // HELPER METHOD: CALCULATE PROGRESS MANUALLY
+
+            static double CalculateProgressManually()
+            {
+                if (myPlanner.Items.Count == 0)
+                {
+                    return 0.0;
+                }
+
+                int completedCount = 0;
+                for (int i = 0; i < myPlanner.Items.Count; i++)
+                {
+                    if (myPlanner.Items[i].IsCompleted)
+                    {
+                        completedCount++;
+                    }
+                }
+
+                double totalTasks = myPlanner.Items.Count;
+                double progress = (completedCount / totalTasks) * 100.0;
+
+                progress = Math.Round(progress, 2);
+
+                return progress;
+            }
+        
+    
 
 
         static void ShowHighPriorityTasks(Planner planner)
