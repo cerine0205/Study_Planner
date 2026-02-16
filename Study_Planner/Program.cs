@@ -233,7 +233,7 @@ namespace StudyPlanner
             Console.WriteLine("========================================");
 
             // Check if there are any tasks
-            if (myPlanner.Items.Count == 0)
+            if (myPlanner.Items.Length == 0)
             {
                 Console.WriteLine("No tasks found. The list is empty.");
             }
@@ -241,7 +241,7 @@ namespace StudyPlanner
             {
                 // Loop through all tasks and display them
                 int taskNumber = 1;
-                for (int i = 0; i < myPlanner.Items.Count; i++)
+                for (int i = 0; i < myPlanner.Items.Length; i++)
                 {
                     PlannerItem currentTask = myPlanner.Items[i];
 
@@ -260,7 +260,7 @@ namespace StudyPlanner
                 }
 
                 Console.WriteLine("========================================");
-                Console.WriteLine("Total tasks: " + myPlanner.Items.Count);
+                Console.WriteLine("Total tasks: " + myPlanner.Items.Length);
             }
 
             Console.WriteLine("\nPress any key to continue...");
@@ -277,7 +277,7 @@ namespace StudyPlanner
             Console.WriteLine("========================================");
 
             // Check if there are any tasks
-            if (myPlanner.Items.Count == 0)
+            if (myPlanner.Items.Length == 0)
             {
                 Console.WriteLine("No tasks found. The list is empty.");
                 Console.WriteLine("\nPress any key to continue...");
@@ -289,7 +289,7 @@ namespace StudyPlanner
             Console.WriteLine("Incomplete tasks:\n");
 
             int displayNumber = 1;
-            for (int i = 0; i < myPlanner.Items.Count; i++)
+            for (int i = 0; i < myPlanner.Items.Length; i++)
             {
                 PlannerItem currentTask = myPlanner.Items[i];
                 if (!currentTask.IsCompleted)
@@ -328,7 +328,7 @@ namespace StudyPlanner
             {
                 // Find and mark the task as completed
                 int incompleteCounter = 0;
-                for (int i = 0; i < myPlanner.Items.Count; i++)
+                for (int i = 0; i < myPlanner.Items.Length; i++)
                 {
                     PlannerItem currentTask = myPlanner.Items[i];
                     if (!currentTask.IsCompleted)
@@ -732,70 +732,20 @@ namespace StudyPlanner
 
             return false;
         }// HELPER METHOD: CHECK IF STRING IS ONLY NUMBERS
-        static bool IsOnlyNumbers(string input)
-        {
-            if (input == "")
-            {
-                return false;
-            }
+   
 
-            foreach (char c in input)
-            {
-                if (!char.IsDigit(c))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        // HELPER METHOD: CHECK FOR REPEATED CHARACTERS
-        static bool HasTooManyRepeatedChars(string input)
-        {
-            if (input.Length == 0)
-            {
-                return false;
-            }
-
-            string uniqueChars = "";
-
-            foreach (char c in input)
-            {
-                bool found = false;
-                foreach (char unique in uniqueChars)
-                {
-                    if (c == unique)
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (!found)
-                {
-                    uniqueChars = uniqueChars + c;
-                }
-            }
-
-            if (uniqueChars.Length < 2)
-            {
-                return true;
-            }
-
-            return false;
-        }
+  
 
         // HELPER METHOD: CALCULATE PROGRESS MANUALLY
         static double CalculateProgressManually()
         {
-            if (myPlanner.Items.Count == 0)
+            if (myPlanner.Items.Length == 0)
             {
                 return 0.0;
             }
 
             int completedCount = 0;
-            for (int i = 0; i < myPlanner.Items.Count; i++)
+            for (int i = 0; i < myPlanner.Items.Length; i++)
             {
                 if (myPlanner.Items[i].IsCompleted)
                 {
@@ -803,7 +753,7 @@ namespace StudyPlanner
                 }
             }
 
-            double totalTasks = myPlanner.Items.Count;
+            double totalTasks = myPlanner.Items.Length;
             double progress = (completedCount / totalTasks) * 100.0;
 
             progress = Math.Round(progress, 2);
@@ -811,42 +761,11 @@ namespace StudyPlanner
             return progress;
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         static void ShowHighPriorityTasks(Planner planner)
         {
             var highPriorityItems = planner.GetItemsByPriority(Priority.High);
 
-            if (highPriorityItems.Count == 0)
+            if (highPriorityItems.Length == 0)
             {
                 Console.WriteLine("No high priority tasks found.");
             }
@@ -873,7 +792,7 @@ namespace StudyPlanner
             Console.WriteLine("========================================");
 
             // Check if list is empty
-            if (myPlanner.Items.Count == 0)
+            if (myPlanner.Items.Length == 0)
             {
                 Console.WriteLine("No tasks found. The list is empty.");
                 Console.WriteLine("\nPress any key to continue...");
@@ -898,7 +817,7 @@ namespace StudyPlanner
             int matchCount = 0;
             string lowerKeyword = searchKeyword.Trim().ToLower();
 
-            for (int i = 0; i < myPlanner.Items.Count; i++)
+            for (int i = 0; i < myPlanner.Items.Length; i++)
             {
                 PlannerItem currentTask = myPlanner.Items[i];
                 string lowerTitle = currentTask.Title.ToLower();
@@ -923,7 +842,7 @@ namespace StudyPlanner
                 int arrayIndex = 0;
 
                 // Second pass: store matching tasks in array
-                for (int i = 0; i < myPlanner.Items.Count; i++)
+                for (int i = 0; i < myPlanner.Items.Length; i++)
                 {
                     PlannerItem currentTask = myPlanner.Items[i];
                     string lowerTitle = currentTask.Title.ToLower();
@@ -970,7 +889,7 @@ namespace StudyPlanner
             Console.WriteLine("========================================");
 
             // Check if list is empty
-            if (myPlanner.Items.Count == 0)
+            if (myPlanner.Items.Length == 0)
             {
                 Console.WriteLine("No tasks found. The list is empty.");
                 Console.WriteLine("\nPress any key to continue...");
@@ -980,7 +899,7 @@ namespace StudyPlanner
 
             // Display all tasks
             Console.WriteLine("All tasks:\n");
-            for (int i = 0; i < myPlanner.Items.Count; i++)
+            for (int i = 0; i < myPlanner.Items.Length; i++)
             {
                 PlannerItem currentTask = myPlanner.Items[i];
                 Console.WriteLine((i + 1) + ". " + currentTask.Title + " (" + currentTask.Category + ") - " + currentTask.Date.ToString("dd/MM/yyyy"));
@@ -1002,7 +921,7 @@ namespace StudyPlanner
             {
                 Console.WriteLine("Delete operation cancelled.");
             }
-            else if (selectedTaskNumber < 1 || selectedTaskNumber > myPlanner.Items.Count)
+            else if (selectedTaskNumber < 1 || selectedTaskNumber > myPlanner.Items.Length)
             {
                 Console.WriteLine("Error: Task number out of range.");
             }
@@ -1017,13 +936,24 @@ namespace StudyPlanner
 
                 if (confirmation != null && confirmation.Trim().ToUpper() == "YES")
                 {
-                    // Delete task and save
-                    myPlanner.Items.RemoveAt(selectedTaskNumber - 1);
+                    PlannerItem[] originalArray = myPlanner.Items;
+                    int indexToRemove = selectedTaskNumber - 1;
+                    PlannerItem[] newArray = new PlannerItem[originalArray.Length - 1];
+
+                    for (int i = 0, j = 0; i < originalArray.Length; i++)
+                    {
+                        if (i == indexToRemove)
+                            continue;
+                        newArray[j++] = originalArray[i];
+                    }
+
+                    myPlanner.Items = newArray;
                     SavePlannerData();
 
-                    Console.WriteLine("\n*** SUCCESS! ***");
+                    Console.WriteLine("\n* SUCCESS! *");
                     Console.WriteLine("Task deleted successfully!");
                 }
+ 
                 else
                 {
                     Console.WriteLine("\nDelete operation cancelled.");
@@ -1045,7 +975,7 @@ namespace StudyPlanner
             Console.WriteLine("========================================");
 
             // Check if list is empty
-            if (myPlanner.Items.Count == 0)
+            if (myPlanner.Items.Length == 0)
             {
                 Console.WriteLine("No tasks found. The list is empty.");
                 Console.WriteLine("\nPress any key to continue...");
@@ -1055,7 +985,7 @@ namespace StudyPlanner
 
             // Display all tasks
             Console.WriteLine("All tasks:\n");
-            for (int i = 0; i < myPlanner.Items.Count; i++)
+            for (int i = 0; i < myPlanner.Items.Length; i++)
             {
                 PlannerItem currentTask = myPlanner.Items[i];
                 Console.WriteLine((i + 1) + ". " + currentTask.Title + " (" + currentTask.Category + ") - " + currentTask.Date.ToString("dd/MM/yyyy"));
@@ -1083,7 +1013,7 @@ namespace StudyPlanner
                 Console.ReadKey();
                 return;
             }
-            else if (selectedTaskNumber < 1 || selectedTaskNumber > myPlanner.Items.Count)
+            else if (selectedTaskNumber < 1 || selectedTaskNumber > myPlanner.Items.Length)
             {
                 Console.WriteLine("Error: Task number out of range.");
                 Console.WriteLine("\nPress any key to continue...");
@@ -1169,7 +1099,7 @@ namespace StudyPlanner
             Console.WriteLine("========================================");
 
             // Check if list is empty
-            if (myPlanner.Items.Count == 0)
+            if (myPlanner.Items.Length == 0)
             {
                 Console.WriteLine("No tasks found. The list is empty.");
                 Console.WriteLine("\nPress any key to continue...");
@@ -1179,7 +1109,7 @@ namespace StudyPlanner
 
             // Display all tasks with their status
             Console.WriteLine("All tasks:\n");
-            for (int i = 0; i < myPlanner.Items.Count; i++)
+            for (int i = 0; i < myPlanner.Items.Length; i++)
             {
                 PlannerItem currentTask = myPlanner.Items[i];
                 string status = currentTask.IsCompleted ? "[COMPLETED]" : "[INCOMPLETE]";
@@ -1202,7 +1132,7 @@ namespace StudyPlanner
             {
                 Console.WriteLine("Update operation cancelled.");
             }
-            else if (selectedTaskNumber < 1 || selectedTaskNumber > myPlanner.Items.Count)
+            else if (selectedTaskNumber < 1 || selectedTaskNumber > myPlanner.Items.Length)
             {
                 Console.WriteLine("Error: Task number out of range.");
             }
@@ -1273,7 +1203,7 @@ namespace StudyPlanner
             Console.WriteLine("========================================");
 
             // Check if list is empty
-            if (myPlanner.Items.Count == 0)
+            if (myPlanner.Items.Length == 0)
             {
                 Console.WriteLine("No tasks found. The list is empty.");
                 Console.WriteLine("\nPress any key to continue...");
@@ -1285,7 +1215,7 @@ namespace StudyPlanner
             int overdueCount = 0;
             DateTime today = DateTime.Today;
 
-            for (int i = 0; i < myPlanner.Items.Count; i++)
+            for (int i = 0; i < myPlanner.Items.Length; i++)
             {
                 PlannerItem currentTask = myPlanner.Items[i];
                 if (currentTask.IsOverdue(today))
@@ -1306,7 +1236,7 @@ namespace StudyPlanner
                 int arrayIndex = 0;
 
                 // Second pass: store overdue tasks in array
-                for (int i = 0; i < myPlanner.Items.Count; i++)
+                for (int i = 0; i < myPlanner.Items.Length; i++)
                 {
                     PlannerItem currentTask = myPlanner.Items[i];
                     if (currentTask.IsOverdue(today))
@@ -1362,7 +1292,7 @@ namespace StudyPlanner
             Console.WriteLine("   UPCOMING DEADLINES (NEXT 3 DAYS)");
             Console.WriteLine("========================================");
 
-            if (myPlanner.Items.Count == 0)
+            if (myPlanner.Items.Length == 0)
             {
                 Console.WriteLine("No tasks found. The list is empty.");
                 Console.WriteLine("\nPress any key to continue...");
@@ -1374,7 +1304,7 @@ namespace StudyPlanner
             DateTime threeDaysLater = today.AddDays(3);
 
             int upcomingCount = 0;
-            for (int i = 0; i < myPlanner.Items.Count; i++)
+            for (int i = 0; i < myPlanner.Items.Length; i++)
             {
                 PlannerItem currentTask = myPlanner.Items[i];
                 if (!currentTask.IsCompleted &&
@@ -1394,7 +1324,7 @@ namespace StudyPlanner
                 PlannerItem[] upcomingTasks = new PlannerItem[upcomingCount];
                 int arrayIndex = 0;
 
-                for (int i = 0; i < myPlanner.Items.Count; i++)
+                for (int i = 0; i < myPlanner.Items.Length; i++)
                 {
                     PlannerItem currentTask = myPlanner.Items[i];
                     if (!currentTask.IsCompleted &&
