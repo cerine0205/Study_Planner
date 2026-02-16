@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace StudyPlanner
 {
-    internal class Program
+     class Program
     {
         // Main planner object to store all tasks
         static Planner myPlanner = new Planner();
@@ -567,7 +567,11 @@ namespace StudyPlanner
 
             while (!isValid)
             {
+
                 Console.Write("Enter date (dd/MM/yyyy, e.g., 25/03/2026): ");
+
+                Console.Write("Enter date (dd/MM/yyyy, e.g., 10/02/2026): ");
+
                 string dateInput = Console.ReadLine();
 
                 bool isValidFormat = DateTime.TryParseExact(
@@ -581,8 +585,12 @@ namespace StudyPlanner
                 if (!isValidFormat)
                 {
                     Console.WriteLine("Error: Date format is incorrect.");
+
                     Console.WriteLine("Reason: Day, month, or year is invalid, or wrong separators used.");
                     Console.WriteLine("Please use dd/MM/yyyy format (e.g., 25/03/2026).");
+
+                    Console.WriteLine("Please use dd/MM/yyyy format (e.g., 10/02/2026).");
+
                 }
                 else if (validDate.Date < DateTime.Today)
                 {
