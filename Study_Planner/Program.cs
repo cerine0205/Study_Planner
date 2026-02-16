@@ -7,11 +7,20 @@ using System.Threading.Tasks;
 
 namespace StudyPlanner
 {
-    class Program
+    internal class Program
     {
         // Main planner object to store all tasks
         static Planner myPlanner = new Planner();
 
+        // Study tips array - Simple student-level feature
+        static string[] studyTips = new string[]
+        {
+            "Take short breaks every 30 minutes to stay focused.",
+            "Review your notes within 24 hours for better retention.",
+            "Study in a quiet place with good lighting.",
+            "Get enough sleep before exams - 7-8 hours is ideal.",
+            "Start with the hardest subject when your mind is fresh."
+        };
         static void Main(string[] args)
         {
             // This is the main program loop - keeps running until user exits
@@ -25,6 +34,8 @@ namespace StudyPlanner
                 Console.WriteLine("   STUDY PLANNER SYSTEM");
                 Console.WriteLine("========================================");
 
+
+                DisplayRandomTip();
                 // Calculate and show current progress
                 double currentProgress = CalculateProgressManually();
                 Console.WriteLine("Current Progress: " + currentProgress + "%");
@@ -115,10 +126,15 @@ namespace StudyPlanner
                 }
             }
         }
-
-        // ========================================
+        static void DisplayRandomTip()
+        {
+            Random random = new Random();
+            int randomIndex = random.Next(studyTips.Length);
+            Console.WriteLine("Note: " + studyTips[randomIndex]);
+            Console.WriteLine();
+        }
         // METHOD 1: ADD STUDY SESSION
-        // ========================================
+
         static void AddStudySession()
         {
             Console.Clear();
@@ -126,22 +142,12 @@ namespace StudyPlanner
             Console.WriteLine("   ADD NEW STUDY SESSION");
             Console.WriteLine("========================================");
 
-            // Step 1: Get and validate Title
+            // Get and validate all inputs
             string taskTitle = GetValidTitle();
-
-            // Step 2: Get and validate Subject/Category
             string taskSubject = GetValidSubject();
-
-            // Step 3: Get and validate Topic
             string taskTopic = GetValidTopic();
-
-            // Step 4: Get and validate Minutes
             int taskMinutes = GetValidMinutes();
-
-            // Step 5: Get and validate Date
             DateTime taskDate = GetValidDate();
-
-            // Step 6: Get and validate Priority
             Priority taskPriority = GetValidPriority();
 
             // Try to create the study session
@@ -172,9 +178,8 @@ namespace StudyPlanner
             Console.ReadKey();
         }
 
-        // ========================================
         // METHOD 2: ADD DEADLINE TASK
-        // ========================================
+
         static void AddDeadlineTask()
         {
             Console.Clear();
@@ -182,22 +187,12 @@ namespace StudyPlanner
             Console.WriteLine("   ADD NEW DEADLINE TASK");
             Console.WriteLine("========================================");
 
-            // Step 1: Get and validate Title
+            // Get and validate all inputs
             string taskTitle = GetValidTitle();
-
-            // Step 2: Get and validate Subject
             string taskSubject = GetValidSubject();
-
-            // Step 3: Get and validate Minutes
             int taskMinutes = GetValidMinutes();
-
-            // Step 4: Get and validate Date
             DateTime taskDate = GetValidDate();
-
-            // Step 5: Get and validate Task Type
             TaskType taskType = GetValidTaskType();
-
-            // Step 6: Get and validate Priority
             Priority taskPriority = GetValidPriority();
 
             // Try to create the deadline task
@@ -228,9 +223,8 @@ namespace StudyPlanner
             Console.ReadKey();
         }
 
-        // ========================================
         // METHOD 3: SHOW ALL TASKS
-        // ========================================
+
         static void ShowAllTasks()
         {
             Console.Clear();
@@ -273,9 +267,8 @@ namespace StudyPlanner
             Console.ReadKey();
         }
 
-        // ========================================
         // METHOD 4: MARK TASK AS COMPLETED
-        // ========================================
+
         static void MarkTaskCompleted()
         {
             Console.Clear();
@@ -356,10 +349,8 @@ namespace StudyPlanner
             Console.ReadKey();
         }
 
-        // ========================================
-        // VALIDATION METHOD 1: GET VALID TITLE
-        // ========================================
-        // This method keeps asking until user enters a valid title
+        // VALIDATION METHOD 1: GET VALID TITLE (FIXED)
+
         static string GetValidTitle()
         {
             string userInput = "";
@@ -370,10 +361,24 @@ namespace StudyPlanner
                 Console.Write("Enter task title: ");
                 userInput = Console.ReadLine();
 
-                // Check if input is empty or just spaces
                 if (userInput == null || userInput.Trim() == "")
                 {
                     Console.WriteLine("Error: Title cannot be empty. Please try again.");
+                }
+                else if (userInput.Trim().Length < 3)
+                {
+                    Console.WriteLine("Error: Title is too short. Please enter at least 3 characters.");
+                    Console.WriteLine("Example: 'Review Math' or 'Study Chapter 5'");
+                }
+                else if (IsOnlyNumbers(userInput.Trim()))
+                {
+                    Console.WriteLine("Error: Title cannot be just numbers. Please add a description.");
+                    Console.WriteLine("Example: Instead of '4', write 'Chapter 4 Review'");
+                }
+                else if (HasTooManyRepeatedChars(userInput.Trim()))
+                {
+                    Console.WriteLine("Error: Title contains too many repeated characters.");
+                    Console.WriteLine("Please enter a meaningful title, not random letters.");
                 }
                 else
                 {
@@ -384,9 +389,9 @@ namespace StudyPlanner
             return userInput.Trim();
         }
 
-        // ========================================
-        // VALIDATION METHOD 2: GET VALID SUBJECT
-        // ========================================
+
+        // VALIDATION METHOD 2: GET VALID SUBJECT (FIXED)
+
         static string GetValidSubject()
         {
             string userInput = "";
@@ -397,10 +402,19 @@ namespace StudyPlanner
                 Console.Write("Enter subject/category: ");
                 userInput = Console.ReadLine();
 
-                // Check if input is empty or just spaces
                 if (userInput == null || userInput.Trim() == "")
                 {
                     Console.WriteLine("Error: Subject cannot be empty. Please try again.");
+                }
+                else if (IsOnlyNumbers(userInput.Trim()))
+                {
+                    Console.WriteLine("Error: Subject name cannot be just numbers.");
+                    Console.WriteLine("Please enter a real subject name like 'Math' or 'Physics'.");
+                }
+                else if (HasTooManyRepeatedChars(userInput.Trim()))
+                {
+                    Console.WriteLine("Error: Subject name contains too many repeated characters.");
+                    Console.WriteLine("Please enter a real subject name, not random letters.");
                 }
                 else
                 {
@@ -411,9 +425,70 @@ namespace StudyPlanner
             return userInput.Trim();
         }
 
-        // ========================================
-        // VALIDATION METHOD 3: GET VALID TOPIC
-        // ========================================
+        // HELPER METHOD: CHECK IF STRING IS ONLY NUMBERS
+
+        static bool IsOnlyNumbers(string input)
+        {
+            if (input == "")
+            {
+                return false;
+            }
+
+            foreach (char c in input)
+            {
+                if (!char.IsDigit(c))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+
+        // HELPER METHOD: CHECK FOR REPEATED CHARACTERS
+
+        static bool HasTooManyRepeatedChars(string input)
+        {
+            // Count how many different characters exist in the input
+            if (input.Length == 0)
+            {
+                return false;
+            }
+
+            // Use a simple method to count unique characters
+            string uniqueChars = "";
+
+            foreach (char c in input)
+            {
+                bool found = false;
+                foreach (char unique in uniqueChars)
+                {
+                    if (c == unique)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    uniqueChars = uniqueChars + c;
+                }
+            }
+
+            // If less than 2 unique characters, reject
+            if (uniqueChars.Length < 2)
+            {
+                return true; // Not enough variety - REJECT
+            }
+
+            return false; // Input is valid - has variety
+        }
+
+
+        // VALIDATION METHOD 3: GET VALID TOPIC (FIXED)
+
         static string GetValidTopic()
         {
             string userInput = "";
@@ -424,10 +499,18 @@ namespace StudyPlanner
                 Console.Write("Enter topic: ");
                 userInput = Console.ReadLine();
 
-                // Check if input is empty or just spaces
                 if (userInput == null || userInput.Trim() == "")
                 {
                     Console.WriteLine("Error: Topic cannot be empty. Please try again.");
+                }
+                else if (userInput.Trim().Length < 3)
+                {
+                    Console.WriteLine("Error: Topic is too short. Please enter at least 3 characters.");
+                }
+                else if (HasTooManyRepeatedChars(userInput.Trim()))
+                {
+                    Console.WriteLine("Error: Topic contains too many repeated characters.");
+                    Console.WriteLine("Please enter a meaningful topic, not random letters.");
                 }
                 else
                 {
@@ -438,10 +521,8 @@ namespace StudyPlanner
             return userInput.Trim();
         }
 
-        // ========================================
-        // VALIDATION METHOD 4: GET VALID MINUTES
-        // ========================================
-        // This is MY MAIN CONTRIBUTION - Manual validation using TryParse
+        // VALIDATION METHOD 4: GET VALID MINUTES (FIXED)
+
         static int GetValidMinutes()
         {
             int validMinutes = 0;
@@ -452,27 +533,24 @@ namespace StudyPlanner
                 Console.Write("Enter estimated minutes (e.g., 30, 60, 120): ");
                 string minutesInput = Console.ReadLine();
 
-                // Try to convert the input to a number
                 bool isNumber = int.TryParse(minutesInput, out validMinutes);
 
                 if (!isNumber)
                 {
-                    // User entered letters or special characters
                     Console.WriteLine("Error: Please enter a number, not letters or symbols.");
                 }
                 else if (validMinutes <= 0)
                 {
-                    // User entered zero or negative number
                     Console.WriteLine("Error: Minutes must be greater than zero.");
                 }
-                else if (validMinutes > 999)
+                else if (validMinutes > 480)
                 {
-                    // User entered a very large number
-                    Console.WriteLine("Error: Minutes cannot exceed 999. Please enter a reasonable value.");
+                    Console.WriteLine("Error: Minutes cannot exceed 480 (8 hours).");
+                    Console.WriteLine("Reason: This is unrealistic for a single study session.");
+                    Console.WriteLine("Please break your task into smaller sessions.");
                 }
                 else
                 {
-                    // Input is valid
                     isValid = true;
                 }
             }
@@ -480,10 +558,8 @@ namespace StudyPlanner
             return validMinutes;
         }
 
-        // ========================================
-        // VALIDATION METHOD 5: GET VALID DATE
-        // ========================================
-        // This ensures date is in correct format and not in the past
+        // VALIDATION METHOD 5: GET VALID DATE (FIXED)
+
         static DateTime GetValidDate()
         {
             DateTime validDate = DateTime.Today;
@@ -491,10 +567,9 @@ namespace StudyPlanner
 
             while (!isValid)
             {
-                Console.Write("Enter date (dd/MM/yyyy, e.g., 25/12/2024): ");
+                Console.Write("Enter date (dd/MM/yyyy, e.g., 25/03/2026): ");
                 string dateInput = Console.ReadLine();
 
-                // Try to parse the date in the exact format
                 bool isValidFormat = DateTime.TryParseExact(
                     dateInput,
                     "dd/MM/yyyy",
@@ -505,20 +580,19 @@ namespace StudyPlanner
 
                 if (!isValidFormat)
                 {
-                    // Date format is wrong
                     Console.WriteLine("Error: Date format is incorrect.");
-                    Console.WriteLine("Please use dd/MM/yyyy format (e.g., 25/12/2024).");
+                    Console.WriteLine("Reason: Day, month, or year is invalid, or wrong separators used.");
+                    Console.WriteLine("Please use dd/MM/yyyy format (e.g., 25/03/2026).");
                 }
                 else if (validDate.Date < DateTime.Today)
                 {
-                    // Date is in the past
                     Console.WriteLine("Error: You cannot add a task with a past date.");
+                    Console.WriteLine("Reason: This task should have been completed already.");
                     Console.WriteLine("Today's date is: " + DateTime.Today.ToString("dd/MM/yyyy"));
                     Console.WriteLine("Please enter today's date or a future date.");
                 }
                 else
                 {
-                    // Date is valid
                     isValid = true;
                 }
             }
@@ -526,9 +600,8 @@ namespace StudyPlanner
             return validDate;
         }
 
-        // ========================================
-        // VALIDATION METHOD 6: GET VALID PRIORITY
-        // ========================================
+        // VALIDATION METHOD 6: GET VALID PRIORITY (FIXED)
+
         static Priority GetValidPriority()
         {
             Priority validPriority = Priority.Medium;
@@ -544,13 +617,18 @@ namespace StudyPlanner
 
                 string priorityInput = Console.ReadLine();
 
-                // Try to convert to number
                 int priorityNumber;
                 bool isNumber = int.TryParse(priorityInput, out priorityNumber);
 
                 if (!isNumber)
                 {
                     Console.WriteLine("Error: Please enter a number (1, 2, or 3).");
+                }
+                else if (priorityNumber < 1 || priorityNumber > 3)
+                {
+                    Console.WriteLine("Error: Invalid choice. Number must be between 1 and 3.");
+                    Console.WriteLine("Reason: Only 3 priority levels are available.");
+                    Console.WriteLine("Please enter 1 for Low, 2 for Medium, or 3 for High.");
                 }
                 else if (priorityNumber == 1)
                 {
@@ -567,18 +645,14 @@ namespace StudyPlanner
                     validPriority = Priority.High;
                     isValid = true;
                 }
-                else
-                {
-                    Console.WriteLine("Error: Invalid choice. Please enter 1, 2, or 3.");
-                }
             }
 
             return validPriority;
         }
 
-        // ========================================
-        // VALIDATION METHOD 7: GET VALID TASK TYPE
-        // ========================================
+
+        // VALIDATION METHOD 7: GET VALID TASK TYPE (FIXED)
+
         static TaskType GetValidTaskType()
         {
             TaskType validTaskType = TaskType.Assignment;
@@ -594,13 +668,18 @@ namespace StudyPlanner
 
                 string typeInput = Console.ReadLine();
 
-                // Try to convert to number
                 int typeNumber;
                 bool isNumber = int.TryParse(typeInput, out typeNumber);
 
                 if (!isNumber)
                 {
                     Console.WriteLine("Error: Please enter a number (1, 2, or 3).");
+                }
+                else if (typeNumber < 1 || typeNumber > 3)
+                {
+                    Console.WriteLine("Error: Invalid choice. Number must be between 1 and 3.");
+                    Console.WriteLine("Reason: Only 3 task types are available.");
+                    Console.WriteLine("Please enter 1 for Assignment, 2 for Quiz, or 3 for Exam.");
                 }
                 else if (typeNumber == 1)
                 {
@@ -617,28 +696,21 @@ namespace StudyPlanner
                     validTaskType = TaskType.Exam;
                     isValid = true;
                 }
-                else
-                {
-                    Console.WriteLine("Error: Invalid choice. Please enter 1, 2, or 3.");
-                }
             }
 
             return validTaskType;
         }
 
-        // ========================================
+
         // HELPER METHOD: CALCULATE PROGRESS MANUALLY
-        // ========================================
-        // This method calculates progress using a simple loop
+
         static double CalculateProgressManually()
         {
-            // If there are no tasks, progress is 0%
             if (myPlanner.Items.Count == 0)
             {
                 return 0.0;
             }
 
-            // Count how many tasks are completed
             int completedCount = 0;
             for (int i = 0; i < myPlanner.Items.Count; i++)
             {
@@ -648,18 +720,47 @@ namespace StudyPlanner
                 }
             }
 
-            // Calculate percentage
             double totalTasks = myPlanner.Items.Count;
             double progress = (completedCount / totalTasks) * 100.0;
 
-            // Round to 2 decimal places manually
             progress = Math.Round(progress, 2);
 
             return progress;
         }
+    
 
 
-        static void ShowHighPriorityTasks(Planner planner)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+static void ShowHighPriorityTasks(Planner planner)
         {
             var highPriorityItems = planner.GetItemsByPriority(Priority.High);
 
