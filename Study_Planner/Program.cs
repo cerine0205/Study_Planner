@@ -174,7 +174,7 @@ namespace StudyPlanner
                 Console.WriteLine("Reason: " + ex.Message);
             }
 
-            Console.WriteLine("\nPress any key to continue...");
+            Console.WriteLine("\nPress any key to continue..");
             Console.ReadKey();
         }
 
@@ -1345,6 +1345,8 @@ static void ShowHighPriorityTasks(Planner planner)
                                     task.Date.ToString("dd/MM/yyyy") + " - " + urgency);
                 }
             }
+            
+        
 
             Console.WriteLine("\nPress any key to continue...");
             Console.ReadKey();
