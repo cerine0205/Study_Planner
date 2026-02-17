@@ -39,7 +39,8 @@ namespace StudyPlanner
 
                 // الآن يمكننا تخزين المهام في myPlanner.Items
                 myPlanner.Items = tasks;  // تخزين البيانات في myPlanner.Items
-
+                
+                
                 // عرض المهام أو أي عمليات أخرى
                 Console.WriteLine("Tasks have been loaded into myPlanner!");
             
@@ -64,7 +65,7 @@ namespace StudyPlanner
 
 
                 var (loadedItems, goal) = fileStorage.Load();
-                myPlanner.Items = loadedItems; // نقل البيانات المحملة إلى المخطط
+                myPlanner.Items = loadedItems; 
                 myPlanner.WeeklyGoalMinutes = goal;
                 weeklyGoalMinutes = goal;
 
@@ -82,10 +83,11 @@ namespace StudyPlanner
                 Console.WriteLine("10. Show Overdue Tasks");
                 Console.WriteLine("11. Set Weekly Study Goal");
                 Console.WriteLine("12. Show Upcoming Deadlines (Next 3 Days)");
+                Console.WriteLine("13. Show Subject Summaries");
                 Console.WriteLine("----------------------------------------");
                 Console.WriteLine("0. Exit");
                 Console.WriteLine("========================================");
-                Console.Write("Enter your choice (0-12): ");
+                Console.Write("Enter your choice (0-13): ");
 
                 // Read user input
                 string userChoice = Console.ReadLine().Trim();
@@ -138,6 +140,10 @@ namespace StudyPlanner
                 else if (userChoice == "12")
                 {
                     ShowUpcomingDeadlines();
+                }
+                else if (userChoice == "13")
+                {
+                    ShowSubjectSummaries();
                 }
                 else if (userChoice == "0")
                 {
@@ -1429,7 +1435,59 @@ static int GetValidMinutes()
             Console.WriteLine("\nPress any key to continue...");
             Console.ReadKey();
         }
+        static void ShowSubjectSummaries()
+        {
+            Console.Clear();
+            Console.WriteLine("========================================");
+            Console.WriteLine("        MONTHLY SUBJECT SUMMARY");
+            Console.WriteLine("========================================");
 
+            
+            if (myPlanner.Items == null || myPlanner.Items.Length == 0)
+            {
+                Console.WriteLine("\n[!] The planner is completely empty.");
+                Console.WriteLine("Please add some tasks first before checking summaries.");
+            }
+            else
+            {
+                
+                Console.Write("Enter Year (e.g. 2026): ");
+                if (!int.TryParse(Console.ReadLine(), out int year)) year = DateTime.Now.Year;
+
+                Console.Write("Enter Month (1-12): ");
+                if (!int.TryParse(Console.ReadLine(), out int month)) month = DateTime.Now.Month;
+
+               
+                var report = myPlanner.SubjectSummaryForMonth(year, month);
+
+               
+                if (report.Count == 0)
+                {
+                    Console.WriteLine($"\n[!] No tasks found for the date: {month}/{year}.");
+                    Console.WriteLine("Try searching for another month or year.");
+                }
+                else
+                {
+                   
+                    Console.WriteLine($"\nSuccess: Found {report.Count} subjects for {month}/{year}");
+                    Console.WriteLine("--------------------------------------------------");
+                    Console.WriteLine("{0,-15} | {1,-12} | {2,-12}", "Subject", "Planned (m)", "Done (m)");
+                    Console.WriteLine("--------------------------------------------------");
+
+                    foreach (var entry in report)
+                    {
+                        Console.WriteLine("{0,-15} | {1,-12} | {2,-12}",
+                            entry.Key,
+                            entry.Value.plannedMin,
+                            entry.Value.completedMin);
+                    }
+                    Console.WriteLine("--------------------------------------------------");
+                }
+            }
+
+            Console.WriteLine("\nPress any key to return to menu...");
+            Console.ReadKey();
+        }
         static void ShowUpcomingDeadlines()
         {
             Console.Clear();
