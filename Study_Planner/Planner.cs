@@ -8,9 +8,9 @@ namespace StudyPlanner{
 
     // Manages planner items and validates data before adding them to the system.
 public class Planner{
-   
-   
-    public PlannerItem[] Items = new PlannerItem[0];
+
+        public int WeeklyGoalMinutes { get; set; }
+        public PlannerItem[] Items = new PlannerItem[0];
 
     public void AddItem(PlannerItem item)
     {
