@@ -87,6 +87,12 @@ namespace StudyPlanner
                Items = dtos
             };
 
+            using (var fs = new FileStream(_path, FileMode.Create, FileAccess.Write))
+            {
+                var ser = new DataContractJsonSerializer(typeof(RootDto));
+                ser.WriteObject(fs, root);
+            }
+
         }
 
         public (PlannerItem[] Items, int WeeklyGoalMinutes) Load()
