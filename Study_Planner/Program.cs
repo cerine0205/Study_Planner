@@ -14,8 +14,9 @@ namespace StudyPlanner
     {
         // Main planner object to store all tasks
         static Planner myPlanner = new Planner();
+        static FileStorage fileStorage = new FileStorage("planner-data.json");
+        static int weeklyGoalMinutes = 0;
 
-       
 
         // Study tips array - Simple student-level feature
         static string[] studyTips = new string[]
@@ -60,6 +61,13 @@ namespace StudyPlanner
                 double currentProgress = CalculateProgressManually();
                 Console.WriteLine("Current Progress: " + currentProgress + "%");
                 Console.WriteLine("========================================");
+
+
+                var (loadedItems, goal) = fileStorage.Load();
+                myPlanner.Items = loadedItems; // نقل البيانات المحملة إلى المخطط
+                myPlanner.WeeklyGoalMinutes = goal;
+                weeklyGoalMinutes = goal;
+
 
                 // Display menu options
                 Console.WriteLine("1. Add Study Session");
@@ -183,6 +191,7 @@ namespace StudyPlanner
                 );
 
                 myPlanner.AddItem(newSession);
+                fileStorage.Save(myPlanner.Items, weeklyGoalMinutes);
 
                 Console.WriteLine("\n*** SUCCESS! ***");
                 Console.WriteLine("Study session added successfully!");
@@ -228,6 +237,7 @@ namespace StudyPlanner
                 );
 
                 myPlanner.AddItem(newTask);
+                fileStorage.Save(myPlanner.Items, weeklyGoalMinutes);
 
                 Console.WriteLine("\n*** SUCCESS! ***");
                 Console.WriteLine("Deadline task added successfully!");
@@ -357,6 +367,8 @@ namespace StudyPlanner
                         if (incompleteCounter == selectedTaskNumber)
                         {
                             currentTask.MarkCompleted();
+                            fileStorage.Save(myPlanner.Items, weeklyGoalMinutes);
+
                             Console.WriteLine("\n*** SUCCESS! ***");
                             Console.WriteLine("Task marked as completed: " + currentTask.Title);
                             break;
