@@ -8,11 +8,12 @@ namespace StudyPlanner
 {
     // Manages planner items and validates data before adding them to the system.
     public class Planner
-    {public List<PlannerItem> GetItems()
+    {public PlannerItem[] GetItems()
 {
-    return items;
+     return items;
 }
-        private List<PlannerItem> items;
+        private PlannerItem[] items;
+        private int count;
         private readonly FileStorage storage = new FileStorage("planner-data.json");
         public int WeeklyGoalMinutes { get; set; } = 0;
 
@@ -34,31 +35,101 @@ namespace StudyPlanner
             if (item.Date.Date < DateTime.Today)
                 throw new ArgumentException("You cannot add an item with a past date.");
 
-            items.Add(item);
-            storage.Save(items, WeeklyGoalMinutes);
+            if (count >= items.Length)
+            {
+                PlannerItem[] newArray = new PlannerItem[items.Length * 2];
+                for (int i = 0; i < count; i++)
+                    newArray[i] = items[i];
+
+                items = newArray;
+            }
+
+         
+            items[count] = item;
+            count++;
+
+          
+            storage.Save(items, WeeklyGoalMinutes, count);
         }
-        public List<PlannerItem> Items => items;
+        public PlannerItem[] Items => items;
 
         public double CalculateProgress()
         {
-             if (Items.Count == 0) return 0;
-             int completed = Items.Count(i => i.IsCompleted);
-             return Math.Round((completed * 100.0) / Items.Count, 2);
-        }
-        public List<PlannerItem> FilterByDay(DateTime day)
+
+            if (count == 0) return 0;
+
+            int completed = 0;
+
+            for (int i = 0; i < count; i++)
+            {
+                if (items[i].IsCompleted)
+                completed++;
+            }
+
+             return Math.Round((completed * 100.0) / count, 2);
+        }  
+        
+        public PlannerItem[] FilterByDay(DateTime day)
         {
-            return Items.Where(i => i.Date.Date == day.Date).ToList();
+            PlannerItem[] temp = new PlannerItem[count];
+            int newCount = 0;
+
+            for (int i = 0; i < count; i++)
+            {
+                if (items[i].Date.Date == day.Date)
+                {
+                   temp[newCount] = items[i];
+                   newCount++;
+                }
+            }
+
+            PlannerItem[] result = new PlannerItem[newCount];
+            for (int i = 0; i < newCount; i++)
+               result[i] = temp[i];
+
+            return result;
         }
 
-        public List<PlannerItem> FilterByWeek(DateTime startOfWeek)
+        public PlannerItem[] FilterByWeek(DateTime startOfWeek)
         {
-            DateTime end = startOfWeek.AddDays(7);
-            return Items.Where(i => i.Date >= startOfWeek && i.Date < end).ToList();
+           DateTime end = startOfWeek.AddDays(7);
+
+           PlannerItem[] temp = new PlannerItem[count];
+           int newCount = 0;
+
+           for (int i = 0; i < count; i++)
+           {
+              if (items[i].Date >= startOfWeek && items[i].Date < end)
+              {
+                 temp[newCount] = items[i];
+                 newCount++;
+              }
+           }
+
+           PlannerItem[] result = new PlannerItem[newCount];
+           for (int i = 0; i < newCount; i++)
+              result[i] = temp[i];
+
+            return result;
         }
 
-        public List<PlannerItem> SortByPriority()
+        public PlannerItem[] SortByPriority()
         {
-            return Items.OrderByDescending(i => i.Priority).ThenBy(i => i.Date).ToList();
+            PlannerItem[] sorted = new PlannerItem[count];
+
+            for (int i = 0; i < count; i++)
+                sorted[i] = items[i];
+
+            Array.Sort(sorted, 0, count, Comparer<PlannerItem>.Create((a, b) =>
+            {
+                int priorityCompare = b.Priority.CompareTo(a.Priority);
+                if (priorityCompare != 0)
+                    return priorityCompare;
+
+                return a.Date.CompareTo(b.Date);
+            }));
+
+            return sorted;
         }
 
         public Dictionary<string, (int plannedMin, int completedMin)> SubjectSummaryForMonth(int year, int month)
@@ -79,7 +150,7 @@ namespace StudyPlanner
 
         public bool MarkCompletedByIndex(int index)
         {
-            if (index < 0 || index >= Items.Count)
+            if (index < 0 || index >= count)
                return false;
 
             Items[index].MarkCompleted();

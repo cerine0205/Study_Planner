@@ -38,68 +38,69 @@ namespace StudyPlanner
         private class RootDto
         {
             [DataMember] public int WeeklyGoalMinutes;
-            [DataMember] public List<ItemDto> Items;
+            [DataMember] public ItemDto[] Items;
         }
 
-        public void Save(List<PlannerItem> items, int weeklyGoalMinutes = 0)
+        public void Save(PlannerItem[] items, int weeklyGoalMinutes = 0 , int count = -1)
         {
-            var root = new RootDto
+            int n = (count >= 0) ? count : items.Length;
+
+            ItemDto[] dtos = new ItemDto[n];
+
+            for (int i = 0; i < n; i++)
             {
-                WeeklyGoalMinutes = weeklyGoalMinutes,
-                Items = new List<ItemDto>()
+               var item = items[i];
+
+               if (item is StudySession s)
+               {
+                 dtos[i] = new ItemDto
+                 {
+                   ItemClass = "StudySession",
+                   Date = s.Date,
+                   Title = s.Title,
+                   Category = s.Category,
+                   EstimatedMinutes = s.EstimatedMinutes,
+                   Priority = s.Priority,
+                   Topic = s.Topic,
+                   IsCompleted = s.IsCompleted
+                 };
+               }
+              else if (item is DeadlineTask d)
+              {
+                   dtos[i] = new ItemDto
+                   {
+                      ItemClass = "DeadlineTask",
+                      Date = d.Date,
+                      Title = d.Title,
+                      Category = d.Category,
+                      EstimatedMinutes = d.EstimatedMinutes,
+                      Priority = d.Priority,
+                      Type = d.Type,
+                      IsCompleted = d.IsCompleted
+                    };
+               }
+           }
+
+            var root = new RootDto
+           {
+               WeeklyGoalMinutes = weeklyGoalMinutes,
+               Items = dtos
             };
 
-            foreach (var it in items)
-            {
-                if (it is StudySession s)
-                {
-                    root.Items.Add(new ItemDto
-                    {
-                        ItemClass = "StudySession",
-                        Date = s.Date,
-                        Title = s.Title,
-                        Category = s.Category,
-                        EstimatedMinutes = s.EstimatedMinutes,
-                        Type = s.Type,
-                        Priority = s.Priority,
-                        IsCompleted = s.IsCompleted,
-                        Topic = s.Topic
-                    });
-                }
-                else if (it is DeadlineTask d)
-                {
-                    root.Items.Add(new ItemDto
-                    {
-                        ItemClass = "DeadlineTask",
-                        Date = d.Date,
-                        Title = d.Title,
-                        Category = d.Category,
-                        EstimatedMinutes = d.EstimatedMinutes,
-                        Type = d.Type,
-                        Priority = d.Priority,
-                        IsCompleted = d.IsCompleted
-                    });
-                }
-            }
-
-            using (var fs = File.Create(_path))
-            {
-                var ser = new DataContractJsonSerializer(typeof(RootDto));
-                ser.WriteObject(fs, root);
-            }
         }
 
-        public (List<PlannerItem> Items, int WeeklyGoalMinutes) Load()
+        public (PlannerItem[] Items, int WeeklyGoalMinutes) Load()
         {
             if (!File.Exists(_path))
-                return (new List<PlannerItem>(), 0);
+                return (Array.Empty<PlannerItem>(), 0);
 
             using (var fs = File.OpenRead(_path))
             {
                 var ser = new DataContractJsonSerializer(typeof(RootDto));
                 var root = (RootDto)ser.ReadObject(fs);
 
-                var result = new List<PlannerItem>();
+                PlannerItem[] result = new PlannerItem[100]; 
+                int count = 0;
 
                 if (root?.Items != null)
                 {
@@ -140,11 +141,28 @@ namespace StudyPlanner
 
                         // Add the restored object to the result list
                         if (obj != null)
-                            result.Add(obj);
+                        {
+                           if (count >= result.Length)
+                           {
+                             
+                              PlannerItem[] newArray = new PlannerItem[result.Length * 2];
+                              for (int i = 0; i < result.Length; i++)
+                                     newArray[i] = result[i];
+              
+                                        result = newArray;
+                            }
+
+                            result[count] = obj;
+                            count++;
+                        } 
                     }
                 }
+                
+                PlannerItem[] finalArray = new PlannerItem[count];
+                for (int i = 0; i < count; i++)
+                  finalArray[i] = result[i];
 
-                return (result, root?.WeeklyGoalMinutes ?? 0);
+                return (finalArray, root?.WeeklyGoalMinutes ?? 0);
             }
         }
     }
